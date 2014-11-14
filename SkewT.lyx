@@ -1,0 +1,2879 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\input colordvi
+\usepackage{color}
+\fancyhead{}
+\fancyfoot[CE,CO]{}
+\newtoks{\addressee} \global\addressee={}
+\newdimen\longindent \longindent=3.5truein
+\fancyhead[L]{Memo to: \the\addressee \\ \datetoday \\ Page \thepage \hfill}
+\renewcommand{\headrulewidth}{0.0pt}
+\newenvironment{lyxlist}[1]
+{\begin{list}{}
+{\settowidth{\labelwidth}{#1}
+\setlength{\leftmargin}{\labelwidth}
+\addtolength{\leftmargin}{\labelsep}
+\renewcommand{\makelabel}[1]{##1\hfil}}}
+{\end{list}}
+\newcommand{\datetoday}{\number\day\space
+     \ifcase\month\or January\or February\or March\or April\or May\or
+     June\or July\or August\or September\or October\or November\or
+     December\fi
+     \space\number\year}
+\newcommand{\EOLmemo}{\null \vskip-1.5truein
+{\raggedright \textsf{\textsc{\large \textcolor{blue}{Earth Observing Laboratory}}}}\par
+{\raggedright \textsf{\textsl{\textcolor{blue}{Memorandum:}}}} \par \vskip6pt
+{\color{blue}{\hrule}}\par
+\vskip0.3truein \leftline{\hskip \longindent \datetoday} \vskip0.2truein
+\thispagestyle{empty}}
+\newcommand{\attachm}[1]{\begin{lyxlist}{Attachments:00}
+\item [Attachments:] {#1}
+\end{lyxlist}}
+\newcommand{\cc}[1]{\begin{lyxlist}{Attachments:00}
+\item [cc:] {#1}
+\end{lyxlist}}
+\newcommand{\attach}[1]{\begin{lyxlist}{Attachments:00}
+\item [Attachment:] {#1}
+\end{lyxlist}}
+%usage: \encl{A\\B\\C} or \cc{ma,e1\\name2\\name3}
+\end_preamble
+\use_default_options false
+\begin_modules
+knitr
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding default
+\fontencoding global
+\font_roman times
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing single
+\use_hyperref false
+\papersize letterpaper
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 0
+\use_package mathdots 0
+\use_package mathtools 1
+\use_package mhchem 0
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.54cm
+\topmargin 3.54cm
+\rightmargin 2.54cm
+\bottommargin 2.54cm
+\headheight 1cm
+\headsep 2cm
+\footskip 0.5cm
+\secnumdepth 2
+\tocdepth 2
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+EOLmemo 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+global
+\backslash
+addressee={Ranadu documentation}  % >>change "File" to the "To:" name desired
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family sans
+\shape smallcaps
+\color blue
+To:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+the
+\backslash
+addressee
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family sans
+\shape smallcaps
+\color blue
+From:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Al Cooper
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family sans
+\shape smallcaps
+\color blue
+Subject:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Skew-T diagram
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+bigskip
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<initialization,echo=FALSE,include=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+thisFileName <- "SkewT"
+\end_layout
+
+\begin_layout Plain Layout
+
+require(Ranadu, quietly = TRUE, warn.conflicts=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+require(ggplot2)
+\end_layout
+
+\begin_layout Plain Layout
+
+require(grid)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(knitr)
+\end_layout
+
+\begin_layout Plain Layout
+
+require(ggthemes)
+\end_layout
+
+\begin_layout Plain Layout
+
+require(vioplot)
+\end_layout
+
+\begin_layout Plain Layout
+
+require(plyr)
+\end_layout
+
+\begin_layout Plain Layout
+
+opts_chunk$set(echo=FALSE, include=FALSE, fig.lp="fig:", size='footnotesize')
+\end_layout
+
+\begin_layout Plain Layout
+
+opts_chunk$set(fig.width=6, fig.height=5, fig.pos="center", digits=4)
+\end_layout
+
+\begin_layout Plain Layout
+
+Directory <- DataDirectory ()
+\end_layout
+
+\begin_layout Plain Layout
+
+Flight <- "rf16" 				# XXX change this
+\end_layout
+
+\begin_layout Plain Layout
+
+Project = "DEEPWAVE"			 # XXX change this
+\end_layout
+
+\begin_layout Plain Layout
+
+fname = sprintf("%s%s/%s%s.nc", Directory,Project,Project,Flight)
+\end_layout
+
+\begin_layout Plain Layout
+
+Data <- getNetCDF (fname, standardVariables(c("THETAP")))		#XXX set variables
+ needed here
+\end_layout
+
+\begin_layout Plain Layout
+
+#SaveRData <- sprintf("%s.Rdata.gz", thisFileName)
+\end_layout
+
+\begin_layout Plain Layout
+
+EPS <- StandardConstant ("MWW") / StandardConstant ("MWD")
+\end_layout
+
+\begin_layout Plain Layout
+
+TZERO <- StandardConstant("Tzero")
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction and goal
+\end_layout
+
+\begin_layout Standard
+The skew-T diagram (formally, the Skew-T log-p diagram) and related thermodynami
+c diagrams (tephigram, emagram, Stüve diagram) are standard tools for analysis
+ of stability in the atmosphere.
+ There are many versions of this diagram available.
+ A fairly recent and very well documented source is 
+\begin_inset CommandInset href
+LatexCommand href
+name "this URL"
+target "http://bretwhissel.net/skewt/"
+
+\end_inset
+
+, provided by Bret Whissel.
+ Blank diagrams and also source code are available here.
+ The Storm Prediction Center, National Centers for Environmental Prediction,
+ Norman, OK, uses a sounding analysis system called NSHARP, but it has been
+ updated frequently since its introduction and I haven't yet learned the
+ details of how it is generated.
+ NCL (see 
+\begin_inset CommandInset href
+LatexCommand href
+name "this link"
+target "https://www.ncl.ucar.edu/Applications/skewt.shtml"
+
+\end_inset
+
+) provides a skew-T diagram based on the USAF diagram (form dod-wpc 9-16-1)
+ but this dates back to the 1970s and so probably uses the Rossby form for
+ equivalent potential temperature.
+ 
+\end_layout
+
+\begin_layout Standard
+There have been two recent developments that have potential influences on
+ the pseudo-adiabats in the skew-T diagram.
+ First, Davies-Jones (Davies-Jones, R., 2009: On formulas for equivalent
+ potential temperature.
+ Mon.
+ Wea.
+ Review, 137, 3137– 3148) developed an improved representation for the pseudoadi
+abatic equivalent potential temperature, taking into account factors like
+ the variation of the latent heat of vaporization with temperature and making
+ other adjustments.
+ Second, Murphy and Koop (Q.
+\begin_inset space ~
+\end_inset
+
+J.
+\begin_inset space ~
+\end_inset
+
+R.
+\begin_inset space ~
+\end_inset
+
+Meteorol.
+\begin_inset space ~
+\end_inset
+
+Soc.
+\begin_inset space ~
+\end_inset
+
+(2005), 131, pp.
+ 1539–1565) developed an improved representation of the equilibrium water
+ vapor pressure as a function of temperature.
+ So far as I have been able to find, these advances have not been incorporated
+ into thermodynamic diagrams that are readily available.
+ Furthermore, any definition of pseudo-adiabatic equivalent potential temperatur
+e will likely involve approximations because the specific heat and latent
+ heat of vaporization of water varies with temperature, and the former has
+ not been included even in the Davies-Jones formula, which did not use the
+ Murphy-Koop representation of equilibrium water vapor pressure.
+ For that reason, the goal here is to construct new diagrams based on those
+ two advances and compare the results to standard diagrams.
+ For the pseudo-adiabatics, the calculation will be based on direct integration
+ of the differential equation representing constant entropy, as discussed
+ in a 2011 memo referenced from the document ProcessingAlgorithms.pdf.
+\end_layout
+
+\begin_layout Section
+The basic equations and general approach
+\end_layout
+
+\begin_layout Subsection
+The coordinate transformation
+\end_layout
+
+\begin_layout Standard
+The basic coordinates in a skew-T log-p diagram are an ordinate that is
+ based on the base-10 logarithm of the pressure and isotherms that are geometric
+ally at 45
+\begin_inset Formula $^{\circ}$
+\end_inset
+
+ slope with respect to both the abscissa and ordinate.
+ This leads to an abscissa coordinate that is a function of both temperature
+ and pressure and is expressed as a value in the range 0--1 (the plot limits):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+x=\frac{T-T_{l}}{T_{h}-T_{l}}-\frac{\log_{10}(p/p_{l})}{\log_{10}(p_{l}-p_{h})}\label{eq:x-coordinate}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $T$
+\end_inset
+
+ and 
+\begin_inset Formula $p$
+\end_inset
+
+ are the respective temperature [
+\begin_inset Formula $^{\circ}$
+\end_inset
+
+C] and pressure [hPa] and {
+\begin_inset Formula $T_{l},\, T_{h}$
+\end_inset
+
+} and {
+\begin_inset Formula $p_{l},\, p_{h}$
+\end_inset
+
+} are the respective lower and upper limits for temperature along the bottom
+ axis and for pressure.
+ For generating the diagram, this is coded into a function the provide the
+ abscissa for the plot, as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<Xplot-function, echo=TRUE, include=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# references tBot, tTop, pBot, pTop in global environment!! caution!!
+\end_layout
+
+\begin_layout Plain Layout
+
+Xplot <- function (.T, .p) { 
+\end_layout
+
+\begin_layout Plain Layout
+
+  return ((.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Basic lines: isotherms, isobars, dry adiabats
+\end_layout
+
+\begin_layout Standard
+Plotting the isobars and isotherms is then straightforward.
+ For dry adiabats, solving the equation for potential temperature gives
+ the following equation for the temperature 
+\begin_inset Formula $T$
+\end_inset
+
+ corresponding to pressure 
+\begin_inset Formula $p$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+T=\left(T_{R}\right)\left(\frac{p}{p_{l}}\right)^{R_{d}/c_{pd}}-T_{0}\label{eq:T-for-pot-T}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $T_{R}$
+\end_inset
+
+ is the reference temperature for the potential-temperature line (in kelvin)
+ at the lower limit for 
+\begin_inset Formula $p$
+\end_inset
+
+ (or, conventionally, 1000
+\begin_inset space \thinspace{}
+\end_inset
+
+hPa, where 
+\begin_inset Formula $T_{R}$
+\end_inset
+
+ is also the potential temperature) and 
+\begin_inset Formula $T_{0}$
+\end_inset
+
+ is 273.15
+\begin_inset space \thinspace{}
+\end_inset
+
+K.
+ In this equation, dry-air values are conventionally used for the gas constant
+ (
+\begin_inset Formula $R_{d}$
+\end_inset
+
+) and the specific heat at constant pressure (
+\begin_inset Formula $c_{pd}$
+\end_inset
+
+), although this can introduce errors of 1
+\begin_inset space \thinspace{}
+\end_inset
+
+K or more for moist air.
+ For this reason, it may be helpful to plot a range about the dry adiabats
+ to represent this uncertainty, using as an indication of error the value
+ of 
+\begin_inset Formula $T$
+\end_inset
+
+ the difference between the above value and that obtained for 100% relative
+ humidity, using the relationship 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\frac{R}{c_{p}}=\frac{R_{d}}{c_{pd}(1+\frac{1}{5}\frac{e}{p})}^{\prime}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where quantities with subscript 
+\begin_inset Formula $d$
+\end_inset
+
+ refer to dry air and 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+ is the ratio of the molecular weight of water to that of dry air (cf.
+ ProcessingAlgorithms.pdf, p.
+ 38).
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<basic-lines, echo=TRUE, include=TRUE, fig.keep='all'>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+pBot <- 1000
+\end_layout
+
+\begin_layout Plain Layout
+
+pTop <- 100
+\end_layout
+
+\begin_layout Plain Layout
+
+tTop <- 40
+\end_layout
+
+\begin_layout Plain Layout
+
+tBot <- -40
+\end_layout
+
+\begin_layout Plain Layout
+
+tMin <- -100
+\end_layout
+
+\begin_layout Plain Layout
+
+CP <- SpecificHeats ()
+\end_layout
+
+\begin_layout Plain Layout
+
+RoverCP <- CP[3] / CP[1]
+\end_layout
+
+\begin_layout Plain Layout
+
+pLevels <- seq (pBot, pTop, by=-50)
+\end_layout
+
+\begin_layout Plain Layout
+
+tLevels <- seq (tMin, tTop, by=5)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+plot (c (0, 1, 1, 0, 0), c(pBot, pBot, pTop, pTop, pBot), ylim=c(1000,100),
+ log='y', type='l')
+\end_layout
+
+\begin_layout Plain Layout
+
+for (p in pLevels) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  lines (c(0., 1.), c(p, p))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+for (t in tLevels) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  x1 <- Xplot (t, pBot)
+\end_layout
+
+\begin_layout Plain Layout
+
+  y1 <- pBot
+\end_layout
+
+\begin_layout Plain Layout
+
+  x2 <- x1 + 1
+\end_layout
+
+\begin_layout Plain Layout
+
+  y2 <- pTop
+\end_layout
+
+\begin_layout Plain Layout
+
+  lines (c(x1, x2), c(y1, y2), col='blue')  
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+Theta <- seq (TZERO - 100, TZERO + 200, by=10)
+\end_layout
+
+\begin_layout Plain Layout
+
+for (theta in Theta) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  x1 <- Xplot(theta / ((1000/pLevels)^RoverCP) - TZERO, pLevels)
+\end_layout
+
+\begin_layout Plain Layout
+
+  lines (x1, pLevels, col='orange')
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Mixing ratio
+\end_layout
+
+\begin_layout Standard
+Lines representing constant mixing ratio on a thermodynamic diagram represent
+ the equilibrium value at the specified temperature and pressure, and so
+ are often considered in relationship to measurements of dew point in sounding
+ plots.
+ Expressed in units of grams per kilogram of dry air, the mixing ratio 
+\begin_inset Formula $\mathrm{MR}$
+\end_inset
+
+ for moist air in equilibrium with a plane water surface at temperature
+ 
+\begin_inset Formula $T$
+\end_inset
+
+ and pressure 
+\begin_inset Formula $p$
+\end_inset
+
+ is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\mathrm{MR=1000\thinspace\epsilon\frac{e_{s}(T)}{(p-e_{s}(T))}}\label{eq:MR}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $e_{s}(T)$
+\end_inset
+
+ is the equilibrium water vapor pressure.
+ Given a specified value of 
+\begin_inset Formula $\mathrm{MR}$
+\end_inset
+
+, the value of 
+\begin_inset Formula $T$
+\end_inset
+
+ giving that mixing ratio at a specified pressure can be found numerically
+ by solving
+\begin_inset Formula 
+\[
+\mathrm{MR-1000\thinspace\epsilon\frac{e_{s}(T)}{(p-e_{s}(T))}=0}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+numerically, varying 
+\begin_inset Formula $T$
+\end_inset
+
+ with 
+\begin_inset Formula $p$
+\end_inset
+
+ amd 
+\begin_inset Formula $\mathrm{MR}$
+\end_inset
+
+ fixed.
+ The R routine 'nleqslv' is used here to find the temperature, which can
+ be used with (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:x-coordinate"
+
+\end_inset
+
+) to find the plotted abscissa coordinate.
+ This is implemented using this function in the call to 'nleqslv':
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<mr-fn, echo=-1:-3, include=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# note: this omits the enhancement factor, as is conventional def.
+ of eq.
+ vapor pressure
+\end_layout
+
+\begin_layout Plain Layout
+
+TfromRmix <- function (.T, .rMix, .P) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (.rMix - MixingRatio (MurphyKoop (.T) / .P))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Using this function with calls to 'nleqslv' for a sequence of pressures
+ gives a sequence of temperatures and hence a sequence of plot points for
+ constructing the diagram.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<mixing-ratio-lines, echo=TRUE, include=TRUE, echo=-1>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+<<basic-lines>>
+\end_layout
+
+\begin_layout Plain Layout
+
+rMix <- c(0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1., 3., 5, seq (5, 30, by=5)) * 0.001
+\end_layout
+
+\begin_layout Plain Layout
+
+tt <- pLevels  # overwritten below, just a quick allocation
+\end_layout
+
+\begin_layout Plain Layout
+
+for (rmix in rMix) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  for (i in 1:length (pLevels)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    tt[i] <- nleqslv::nleqslv (10., TfromRmix, jac=NULL, rmix, pLevels[i])$x
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+  lines (Xplot (tt, pLevels), pLevels, col='darkgreen', lty=2)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Pseudo-adiabatic equivalent potential temperature
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Sometimes called, incorrectly, pseudo-equivalent potential temperature (it
+ is pseudo-adiabatic in the sense that all water condensate is removed as
+ it appears) or equivalent potential temperature (a term better understood
+ to refer to the true adiabatic process).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The representation of pseudo-adiabats can be done in two ways, either via
+ the formula of Davies-Jones (2009), as presented in ProcessingAlgorithms.pdf,
+ p.
+\begin_inset space ~
+\end_inset
+
+50, or by direct integration of the differential equation obtained by setting
+ the total derivative of entropy with pressure to zero.
+ Previous integrations, discussed in the memo referenced above, demonstrate
+ good agreement between these two approaches, but the direct integration
+ is more basic and is the test against which the Davies-Jones formula was
+ developed so that will be used here.
+\end_layout
+
+\begin_layout Standard
+For integrations that include representations of the temperature dependence
+ of the specific heats and latent heat as well as the Murphy and Koop (2006)
+ representation of equilibrium water vapor pressure, the appropriate differentia
+l form of the entropy can be used to find the pseudo-adiabatic (or adiabatic)
+ derivative of temperature with respect to pressure.
+ For an adiabatic process where all changes occur in equilibrium, the molar
+ entropy 
+\begin_inset Formula $s^{\prime}$
+\end_inset
+
+ is related to temperature 
+\begin_inset Formula $T$
+\end_inset
+
+ and pressure 
+\begin_inset Formula $p$
+\end_inset
+
+ (for a perfect gas) via
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+Tds^{\prime}=c_{p}^{\prime}dT-v^{\prime}dp\label{eq:2ndLaw}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where primed quantities refer to molar quantities, such that 
+\begin_inset Formula $c_{p}^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $v^{\prime}$
+\end_inset
+
+are the molar heat capacity at constant pressure and the molar volume, respectiv
+ely.
+ There are three contributions to the entropy to consider for a moist air
+ parcel: the entropy of the (i) dry air; (ii) water vapor; and (iii) liquid
+ water.
+ If the respective mole numbers of these three components are 
+\begin_inset Formula $n_{d}^{\prime}$
+\end_inset
+
+, 
+\begin_inset Formula $n_{v}^{\prime}$
+\end_inset
+
+, and 
+\begin_inset Formula $n_{w}^{\prime}$
+\end_inset
+
+, then
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+Tds^{\prime}=(n_{d}^{\prime}c_{pd}^{\prime}+n_{v}^{\prime}c_{pv}^{\prime}+n_{w}^{\prime}c_{w}^{\prime})dT-n_{d}^{\prime}v_{d}^{\prime}dp_{d}-n_{v}^{\prime}v_{v}^{\prime}de+L_{v}^{\prime}dn_{v}^{\prime}\label{eq:EntropySum}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $p_{d}$
+\end_inset
+
+ is the pressure of dry air, 
+\begin_inset Formula $e$
+\end_inset
+
+ is the water vapor pressure, and 
+\begin_inset Formula $L_{v}^{\prime}$
+\end_inset
+
+ is the molar latent heat of vaporization of liquid water.
+ The last term in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:EntropySum"
+
+\end_inset
+
+) arises because there is an entropy change associated with the phase change
+ from liquid water to water vapor, and this last term is the heat released
+ by that phase change.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+An additional contribution arises from the entropy increase associated with
+ mixing of the water vapor and the dry air, but this is insignificant and
+ will be neglected.
+\end_layout
+
+\end_inset
+
+ The other terms arise from summing (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:2ndLaw"
+
+\end_inset
+
+) for the three individual components.
+\end_layout
+
+\begin_layout Standard
+The mixing ratios 
+\begin_inset Formula $r$
+\end_inset
+
+ and
+\begin_inset Formula $r_{w}$
+\end_inset
+
+ are, respectively, the masses of water vapor and liquid water per unit
+ mass of dry air:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+r & = & \frac{n_{v}^{\prime}M_{w}}{n_{d}^{\prime}M_{d}}\nonumber \\
+r_{w} & = & \frac{n_{w}^{\prime}M_{w}}{n_{d}^{\prime}M_{d}}\label{eq:MixingRatioDefs}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $M_{w}$
+\end_inset
+
+ is the molecular weight of water (mass of water per mole) and 
+\begin_inset Formula $M_{d}$
+\end_inset
+
+ that of dry air.
+ Dividing (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:EntropySum"
+
+\end_inset
+
+) by 
+\begin_inset Formula $n_{d}^{\prime}M_{d}T$
+\end_inset
+
+ and setting 
+\begin_inset Formula $ds^{\prime}$
+\end_inset
+
+ to zero for an isentropic process leads to
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+(c_{pd}+rc_{pv}+r_{w}c_{w})\frac{dT}{T}-\frac{v_{d}}{T}dp_{d}-r\frac{v_{v}}{T}de+\frac{L_{v}}{T}dr=0\label{eq:DiffForm1}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where unprimed quantities 
+\begin_inset Formula $c_{pd}$
+\end_inset
+
+, 
+\begin_inset Formula $c_{pv}$
+\end_inset
+
+, 
+\begin_inset Formula $c_{w}$
+\end_inset
+
+, 
+\begin_inset Formula $v_{d}$
+\end_inset
+
+, 
+\begin_inset Formula $v_{v}$
+\end_inset
+
+, and 
+\begin_inset Formula $L_{v}$
+\end_inset
+
+ are specific quantities (i.e., per unit mass of dry air for 
+\begin_inset Formula $c_{pd}$
+\end_inset
+
+ and 
+\begin_inset Formula $v_{d}$
+\end_inset
+
+ and per unit mass of water for 
+\begin_inset Formula $c_{pv}$
+\end_inset
+
+, 
+\begin_inset Formula $c_{w}$
+\end_inset
+
+, 
+\begin_inset Formula $v_{v}$
+\end_inset
+
+ and 
+\begin_inset Formula $L_{v}$
+\end_inset
+
+; e.g., 
+\begin_inset Formula $c_{pd}=c_{pd}^{\prime}/M_{d}$
+\end_inset
+
+ and 
+\begin_inset Formula $c_{pv}=c_{pv}^{\prime}/M_{w}$
+\end_inset
+
+).
+ For perfect gases, 
+\begin_inset Formula $v_{d}/T=R_{d}/p_{d}$
+\end_inset
+
+ and 
+\begin_inset Formula $v_{v}/T=R_{w}/e$
+\end_inset
+
+ where 
+\begin_inset Formula $R_{d}$
+\end_inset
+
+ and 
+\begin_inset Formula $R_{w}$
+\end_inset
+
+ are the gas constants for dry air and water vapor, respectively.
+ Also, the ideal-gas form of the Clausius-Clapeyron equation is 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{de_{s}}{e_{s}}=\frac{L_{v}dT}{R_{w}T^{2}}\label{eq:Clausius-Clapeyron}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and Kirchhoff's equation (cf., e.g., Emanuel 1994, Eq.
+\begin_inset space ~
+\end_inset
+
+4,4,3) is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+dL_{V}=(c_{pv}-c_{w})\, dT\,\,.\label{eq:Kirchhoff}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With 
+\begin_inset Formula $e=e_{s}(T)$
+\end_inset
+
+ and 
+\begin_inset Formula $r=r_{s}(T)=\frac{M_{w}}{M_{d}}e_{s}(T)/p_{d}$
+\end_inset
+
+ as corresponds to a saturated parcel, and with some additional transformations
+ as follow, all terms in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:DiffForm1"
+
+\end_inset
+
+) can be transformed into differential relationships that only involve derivativ
+es of T and p:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{L_{v}dr}{T}=\frac{d(L_{v}r)}{T}-r\frac{dL_{v}}{dT}\frac{dT}{T}=\frac{d(L_{v}r)}{T}-r(c_{pv}-c_{w})\frac{dT}{T}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+rR_{w}\frac{de_{s}}{e_{s}}=rR_{w}\frac{L_{vdT}}{R_{w}T^{2}}=\frac{L_{v}r}{T}\frac{dT}{T}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{d(L_{v}r)}{T}=d\left(\frac{L_{v}r}{T}\right)+\frac{L_{v}r}{T}\frac{dT}{T}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+d\left(\frac{L_{v}r}{T}\right)=\left(\frac{\partial\left(\frac{L_{v}r}{T}\right)}{\partial T}\right)_{p_{d}}dT+\left(\frac{\partial\left(\frac{L_{v}r}{T}\right)}{\partial p_{d}}\right)_{T}dp_{d}=\frac{\epsilon T\, d\left(\frac{L_{v}e_{s}(T)}{T}\right)}{p_{d}dT}\frac{dT}{T}-\frac{L_{v}r}{T}\frac{dp_{d}}{p_{d}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where the transformation to dependence on 
+\begin_inset Formula $T$
+\end_inset
+
+ is a consequence of assuming that the parcel remains saturated, and where
+ the temperature dependence of 
+\begin_inset Formula $L_{v}$
+\end_inset
+
+ and the specific heats is implicit.
+ Gathering terms in (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:DiffForm1"
+
+\end_inset
+
+) after these transformations leads to
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left[(c_{pd}+r_{t}c_{w})+\frac{T\epsilon}{p_{d}}\left(\frac{\partial\left(\frac{L_{v}e_{s}(T)}{T}\right)}{\partial T}\right)_{p_{d}}\right]\frac{dT}{T}=\left[R_{d}+\frac{L_{v}r}{T}\right]\frac{dp_{d}}{p_{d}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $r_{t}=r+r_{w}$
+\end_inset
+
+ is the total water mixing ratio and where 
+\begin_inset Formula $\epsilon=M_{w}/M_{d}$
+\end_inset
+
+.
+ The result then gives a relationship between 
+\begin_inset Formula $T$
+\end_inset
+
+ and 
+\begin_inset Formula $p_{d}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{dT}{dp_{d}}=\frac{TR_{d}+L_{v}r}{p_{d}}\,\left[(c_{pd}+r_{t}c_{w})+\frac{T\epsilon}{p_{d}}\left(\frac{\partial\left(\frac{L_{v}e_{s}(T)}{T}\right)}{\partial T}\right)_{p_{d}}\right]^{-1}\label{eq:dTdp}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The result is a derivative that can be used for numerical integrations that
+ take into account the temperature dependence of the specific heats and
+ the latent heat of vaporization and improved representation of the equilibrium
+ vapor pressure 
+\begin_inset Formula $e_{s}(T)$
+\end_inset
+
+, as in Murphy and Koop (2006).
+ This is also used below to evaluate the accuracy of representations of
+ the equivalent potential temperatures.
+ 
+\end_layout
+
+\begin_layout Standard
+Equation (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:dTdp"
+
+\end_inset
+
+) is appropriate for the adiabatic process and so can lead to the wet-equivalent
+ potential temperature 
+\begin_inset Formula $\Theta_{q}$
+\end_inset
+
+.
+ The similar formula for the pseudo-adiabatic equivalent potential temperature
+ 
+\begin_inset Formula $\Theta_{p}$
+\end_inset
+
+ can be obtained by neglecting the heat capacity of the liquid water, and
+ so would be the same as (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:dTdp"
+
+\end_inset
+
+) but with 
+\begin_inset Formula $r_{t}$
+\end_inset
+
+ replaced by 
+\begin_inset Formula $r$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+The pseudo-adiabats are then constructed by integration of (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:dTdp"
+
+\end_inset
+
+) either upward from a fixed starting point at 1000 hPa (which would represent
+ the wet-bulb pseudo-adiabatic potential temperature) or starting from a
+ pressure where humidity is negligible (which would result in pseudo-adiabats
+ labeled by their value equivalent to potential temperature after all water
+ is condensed).
+ Here the former is chosen.
+ The integration is performed using the following R code:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<integration-step, echo=TRUE, include=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# this chunk includes functions including one to integrate between two levels
+\end_layout
+
+\begin_layout Plain Layout
+
+# if the specific-heat-of-liquid-water data have not been read, read and
+ store them
+\end_layout
+
+\begin_layout Plain Layout
+
+if (file.exists ("./SpecificHeatWater.Rdata")) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  load ("./SpecificHeatWater.Rdata") # reloads cw.table
+\end_layout
+
+\begin_layout Plain Layout
+
+} else {
+\end_layout
+
+\begin_layout Plain Layout
+
+  cw.table <- read.table ("./MurphyKoopFig6.txt", sep=',', col.names=c("ID",
+ "T", "cw"))
+\end_layout
+
+\begin_layout Plain Layout
+
+  cw.table$cw[cw.table$ID == 'n'] <- cw.table$cw[cw.table$ID == 'n'] / StandardConst
+ant("MWW")
+\end_layout
+
+\begin_layout Plain Layout
+
+  save (cw.table, file="./SpecificHeatWater.Rdata")
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+CWData <- cw.table [ , 2:3]
+\end_layout
+
+\begin_layout Plain Layout
+
+CWData <- CWData[order(CWData), ]
+\end_layout
+
+\begin_layout Plain Layout
+
+CWData <- CWData[!is.na(CWData[ ,1]), ]
+\end_layout
+
+\begin_layout Plain Layout
+
+load ("./CPV.Rdata")
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\end_layout
+
+\begin_layout Plain Layout
+
+LatentHeatApprox <- function (.T) {  # input in deg.C
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (2.501e6 - 2370 * .T)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+CPWaterVapor <- function (.T) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  tk <- .T + TZERO
+\end_layout
+
+\begin_layout Plain Layout
+
+  # note that there was an error in this formula in the earlier ThetaE memo,
+ 3 Jan 2011
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (1000 * LagrangeInterpolate (tk, 4, CPV))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+SpecificHeatLiquidWater <- function (.T) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  tk <- .T + TZERO
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (1000.
+ * LagrangeInterpolate (tk, 4, CWData))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+# not used; here for reference
+\end_layout
+
+\begin_layout Plain Layout
+
+LCLfn <- function (.p, RbyCP, thetam, mr) {  # used by LCL function call
+ to nleqslv
+\end_layout
+
+\begin_layout Plain Layout
+
+  tt <- thetam / (1000/.p)^RbyCP
+\end_layout
+
+\begin_layout Plain Layout
+
+  ee <- MurphyKoop (tt-TZERO)
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (ee - mr * .p / (mr + StandardConstant("MWW")/StandardConstant("MWD")))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# not used; here for reference; for pseudoadiabat, always at 100% RH
+\end_layout
+
+\begin_layout Plain Layout
+
+LCL <- function (.RH, .T, .p) {  # .RH in a fraction (not %), .T in deg.C, .p in
+ hPa
+\end_layout
+
+\begin_layout Plain Layout
+
+  et <- .RH * MurphyKoop (.T)
+\end_layout
+
+\begin_layout Plain Layout
+
+  mr <- MixingRatio (et/.p)
+\end_layout
+
+\begin_layout Plain Layout
+
+  CPM <- SpecificHeats (et/.p)
+\end_layout
+
+\begin_layout Plain Layout
+
+  RbyCP <- CPM[3] / CPM[1]
+\end_layout
+
+\begin_layout Plain Layout
+
+  thetam <- .T+TZERO * (1000 / .p)^RbyCP
+\end_layout
+
+\begin_layout Plain Layout
+
+  pLCL <- nleqslv::nleqslv (.p, LCLfn, jac=NULL, RbyCP, thetam, mr)
+\end_layout
+
+\begin_layout Plain Layout
+
+  tLCL <- thetam / (1000/pLCL)^RbyCP
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (data.frame ("pLCL"=pLCL, "tLCL"=tLCL))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+deriv1 <- function (.T, .LV) { # evaluate last partial deriv.
+ in (10)
+\end_layout
+
+\begin_layout Plain Layout
+
+  delt <- 0.1
+\end_layout
+
+\begin_layout Plain Layout
+
+  tc <- .T + delt
+\end_layout
+
+\begin_layout Plain Layout
+
+  LVp <- .LV + (CPWaterVapor(tc)-SpecificHeatLiquidWater(tc)) * delt
+\end_layout
+
+\begin_layout Plain Layout
+
+  esp <- MurphyKoop (tc)
+\end_layout
+
+\begin_layout Plain Layout
+
+  delp <- LVp * esp / (.T + delt + TZERO)
+\end_layout
+
+\begin_layout Plain Layout
+
+  tc <- .T - delt
+\end_layout
+
+\begin_layout Plain Layout
+
+  LVm <- .LV - (CPWaterVapor(tc)-SpecificHeatLiquidWater(tc)) * delt
+\end_layout
+
+\begin_layout Plain Layout
+
+  esm <- MurphyKoop (tc)
+\end_layout
+
+\begin_layout Plain Layout
+
+  delm <- LVm * esm / (.T - delt + TZERO)
+\end_layout
+
+\begin_layout Plain Layout
+
+  return ((delp-delm) / (2*delt))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+dTdpdF <- function (.T, .pd, .LV, .rtot=NA, .aflag=FALSE) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  e <- MurphyKoop (.T)
+\end_layout
+
+\begin_layout Plain Layout
+
+  p <- .pd + e
+\end_layout
+
+\begin_layout Plain Layout
+
+  if (.aflag) {  # adiabatic
+\end_layout
+
+\begin_layout Plain Layout
+
+    rx <- .rtot
+\end_layout
+
+\begin_layout Plain Layout
+
+  } else {
+\end_layout
+
+\begin_layout Plain Layout
+
+    rx <- MixingRatio (e/p)
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+  tk <- .T + TZERO
+\end_layout
+
+\begin_layout Plain Layout
+
+  cp_x <- CP[1] + rx * SpecificHeatLiquidWater(.T)
+\end_layout
+
+\begin_layout Plain Layout
+
+  A <- ((tk*SpecificHeats(0)[3]+.LV*MixingRatio(e/p))/.pd) /
+\end_layout
+
+\begin_layout Plain Layout
+
+       (cp_x + (EPS * tk / .pd) * deriv1 (.T, .LV))  
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (A)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# integration step: call repeatedly to construct plottable profile
+\end_layout
+
+\begin_layout Plain Layout
+
+# tk	Initial temperature, kelvin
+\end_layout
+
+\begin_layout Plain Layout
+
+# p1	Initial pressure, hPa
+\end_layout
+
+\begin_layout Plain Layout
+
+# p2	 Final pressure, hPa
+\end_layout
+
+\begin_layout Plain Layout
+
+# value returned, temperature at p2
+\end_layout
+
+\begin_layout Plain Layout
+
+# aflag  FALSE for pseudoadiabatic, adiabatic otherwise
+\end_layout
+
+\begin_layout Plain Layout
+
+IntegrationStep <- function (tc, pd1, pd2, rtot, aflag) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  nsteps <- 2
+\end_layout
+
+\begin_layout Plain Layout
+
+  delpd <- (pd1 - pd2) / nsteps
+\end_layout
+
+\begin_layout Plain Layout
+
+  pd <- pd1
+\end_layout
+
+\begin_layout Plain Layout
+
+  tk <- tc + TZERO
+\end_layout
+
+\begin_layout Plain Layout
+
+  e <- MurphyKoop (tc)
+\end_layout
+
+\begin_layout Plain Layout
+
+  p <- pd + e
+\end_layout
+
+\begin_layout Plain Layout
+
+  r <- MixingRatio (e/p)
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\end_layout
+
+\begin_layout Plain Layout
+
+  # ready to calculate the derivative dT/dp_d, adiabatic and pseudo-adiabatic
+ cases
+\end_layout
+
+\begin_layout Plain Layout
+
+  while (pd > pd2) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    if ((pd-delpd) < pd2) {delpd <- pd-pd2}
+\end_layout
+
+\begin_layout Plain Layout
+
+    dTdpd <- dTdpdF (tc, pd, LV, rtot, aflag) # wet-adiabatic version if
+ aflag TRUE
+\end_layout
+
+\begin_layout Plain Layout
+
+    tch <- tc - dTdpd * delpd/2
+\end_layout
+
+\begin_layout Plain Layout
+
+    ex <- MurphyKoop (tch)
+\end_layout
+
+\begin_layout Plain Layout
+
+    LVh <- LV - (CPWaterVapor (tch) - SpecificHeatLiquidWater (tch)) * dTdpd
+ * delpd / 2
+\end_layout
+
+\begin_layout Plain Layout
+
+    dTdpd <- dTdpdF (tch, pd-delpd/2, LVh, rtot, aflag)
+\end_layout
+
+\begin_layout Plain Layout
+
+    tc <- tc - dTdpd * delpd  # take full step with derivative evaluated
+ half-step
+\end_layout
+
+\begin_layout Plain Layout
+
+    pd <- pd - delpd
+\end_layout
+
+\begin_layout Plain Layout
+
+    LV <- LV + (CPWaterVapor (tch) - SpecificHeatLiquidWater (tch)) * dTdpd
+ * delpd
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (tc)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<THETA-P, echo=TRUE, include=TRUE, echo=-2, fig.height=6>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+<<basic-lines>>
+\end_layout
+
+\begin_layout Plain Layout
+
+<<mixing-ratio-lines>>
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+## first show conventional solution
+\end_layout
+
+\begin_layout Plain Layout
+
+TWB <- seq (tBot, tTop, by=5)
+\end_layout
+
+\begin_layout Plain Layout
+
+ThetaE <- EquivalentPotentialTemperature (1000., TWB, MurphyKoop(TWB))
+\end_layout
+
+\begin_layout Plain Layout
+
+TfromEPT <- function (.T, .thetaE, .P) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  e <- MurphyKoop (.T)
+\end_layout
+
+\begin_layout Plain Layout
+
+  r <- MixingRatio (e / .P)
+\end_layout
+
+\begin_layout Plain Layout
+
+  lhv <- 2.501e6 - 2370.
+ * .T    # latent heat of vaporization, temp-dependent
+\end_layout
+
+\begin_layout Plain Layout
+
+  expn=lhv * r / (CP[1] * (TZERO + .T))
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (.thetaE - (TZERO+.T)*(1000/(.P-e))^RoverCP * exp(expn))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+tt <- pLevels  # shortut to define new vector
+\end_layout
+
+\begin_layout Plain Layout
+
+for (thetaE in ThetaE) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  for (i in 1:length(pLevels)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    tt[i] <- nleqslv::nleqslv (10., TfromEPT, jac=NULL, thetaE, pLevels[i])$x
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+  lines (Xplot (tt, pLevels), pLevels, col='cyan')
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+# this is solution of Davies-Jones formula; do integration later
+\end_layout
+
+\begin_layout Plain Layout
+
+DJTfromEPT <- function (.T, .thetaE, .P) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  L0 <- 2.56313e6
+\end_layout
+
+\begin_layout Plain Layout
+
+  L1 <- 1754.
+\end_layout
+
+\begin_layout Plain Layout
+
+  K2 <- 1.137e6
+\end_layout
+
+\begin_layout Plain Layout
+
+  TK <- .T + TZERO
+\end_layout
+
+\begin_layout Plain Layout
+
+  e <- MurphyKoop (.T)
+\end_layout
+
+\begin_layout Plain Layout
+
+  r <- MixingRatio (e/.P) 
+\end_layout
+
+\begin_layout Plain Layout
+
+  CP <- SpecificHeats(0.)     # need dry-air value, don't need vector
+\end_layout
+
+\begin_layout Plain Layout
+
+  TL = 2840./(3.5*log(TK)-log(e)-4.805)+55.
+\end_layout
+
+\begin_layout Plain Layout
+
+  TDL <- TK * (1000./(.P-e))**0.2854*(TK/TL)**(0.28e-3*r)
+\end_layout
+
+\begin_layout Plain Layout
+
+  THETAP <- TDL * exp (r*(L0-L1*(TL-TZERO)+K2*r)/(CP[1]*TL))
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (.thetaE - THETAP)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+for (thetaE in ThetaE) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  for (i in 1:length(pLevels)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    tt[i] <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaE, pLevels[i])$x
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+  lines (Xplot (tt, pLevels), pLevels, col='red', lty=2, lwd=1.5)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+TQfromWBPT <- function (.T, .ThetaQ, .P, .rtot) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  e <- MurphyKoop (.T)
+\end_layout
+
+\begin_layout Plain Layout
+
+  r <- MixingRatio (e / .P)
+\end_layout
+
+\begin_layout Plain Layout
+
+ lwc <- ifelse ((.rtot > r), 1000 * (.rtot - r) * (100 * (.P-e) / 
+\end_layout
+
+\begin_layout Plain Layout
+
+                            (SpecificHeats(0)[3] * (.T+TZERO))), 0.)
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (.ThetaQ - WetEquivalentPotentialTemperature (.P, .T, 0, lwc))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# now add lines obtained by integration:
+\end_layout
+
+\begin_layout Plain Layout
+
+CP <- SpecificHeats(0)
+\end_layout
+
+\begin_layout Plain Layout
+
+for (twb in TWB[15]) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  p1 <- pBot - MurphyKoop (twb)
+\end_layout
+
+\begin_layout Plain Layout
+
+  ptLevels <- pLevels
+\end_layout
+
+\begin_layout Plain Layout
+
+  ptLevels[1] <- pBot
+\end_layout
+
+\begin_layout Plain Layout
+
+  rtot <- MixingRatio (MurphyKoop (twb) / pBot)
+\end_layout
+
+\begin_layout Plain Layout
+
+  LV <- LatentHeatApprox (twb)
+\end_layout
+
+\begin_layout Plain Layout
+
+  tt[1] <- twb
+\end_layout
+
+\begin_layout Plain Layout
+
+  for (i in 1:(length(pLevels)-1)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    tt[i+1] <- IntegrationStep (tt[i], p1, pLevels[i+1], rtot, aflag=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+    p1 <- pLevels[i+1]
+\end_layout
+
+\begin_layout Plain Layout
+
+    tch <- (tt[i+1]+tt[i])/2
+\end_layout
+
+\begin_layout Plain Layout
+
+    LV <- LV + (CPWaterVapor (tch) - SpecificHeatLiquidWater (tch)) * (tt[i+1]-t
+t[i])
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+  ptLevels <- pLevels + MurphyKoop(tt)
+\end_layout
+
+\begin_layout Plain Layout
+
+  ptLevels[1] <- pBot
+\end_layout
+
+\begin_layout Plain Layout
+
+  lines (Xplot (tt, ptLevels), ptLevels, col='brown', lty=2, lwd=3)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# add a wet-adiabat
+\end_layout
+
+\begin_layout Plain Layout
+
+ThetaQ <- WetEquivalentPotentialTemperature (1000, TWB[15])
+\end_layout
+
+\begin_layout Plain Layout
+
+rTot <- MixingRatio (MurphyKoop (TWB[15]) / 1000)
+\end_layout
+
+\begin_layout Plain Layout
+
+for (i in 1:length(pLevels)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  tt[i] <- nleqslv::nleqslv (10., TQfromWBPT, jac=NULL, ThetaQ, pLevels[i],
+ rTot)$x
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+lines (Xplot (tt, pLevels), pLevels, col='purple', lty=1, lwd=6)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\family sans
+\color blue
+-- End of Memo --
+\end_layout
+
+\begin_layout Standard
+Reproducibility:
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+include enough info to re-run.
+ in zip, include program, pdf if not too big, and subset data, not entire
+ file.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="2">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family sans
+\shape smallcaps
+\color blue
+Project:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{thisFileName}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family sans
+\shape smallcaps
+\color blue
+Archive package:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{thisFileName}.zip
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family sans
+\shape smallcaps
+\color blue
+Contains:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+attachment list below
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family sans
+\shape smallcaps
+\color blue
+Program:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{thisFileName}.Rnw
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family sans
+\shape smallcaps
+\color blue
+Original Data:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+/scr/raf
+\backslash
+_data/
+\backslash
+Sexpr{Project}/
+\backslash
+Sexpr{Flight}.nc
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family sans
+\shape smallcaps
+\color blue
+Git:
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+git@github.com:WilliamCooper/
+\backslash
+Sexpr{thisFileName}.git
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+attachm{
+\backslash
+Sexpr{thisFileName}.Rnw
+\backslash
+
+\backslash
+
+\backslash
+Sexpr{thisFileName}.pdf
+\backslash
+
+\backslash
+SessionInfo}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+cc{first attachment
+\backslash
+
+\backslash
+second
+\backslash
+
+\backslash
+3rd att}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+attach{attachment}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+attachm{first
+\backslash
+
+\backslash
+second} %
+\backslash
+cc{first attachment
+\backslash
+
+\backslash
+second
+\backslash
+
+\backslash
+3rd att}
+\end_layout
+
+\begin_layout Plain Layout
+
+<<save-system-info, echo=FALSE>>= 
+\end_layout
+
+\begin_layout Plain Layout
+
+cat (toLatex(sessionInfo()), file="SessionInfo")
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@ 
+\end_layout
+
+\begin_layout Plain Layout
+
+<<make-zip-archive, echo=TRUE, INCLUDE=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+system (sprintf("zip %s.zip %s.Rnw %s.pdf SessionInfo", thisFileName, thisFileName,
+ thisFileName))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+%
+\backslash
+attach{attachment}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+attachm{ProgramFile
+\backslash
+
+\backslash
+Document.pdf}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%
+\backslash
+cc{first attachment
+\backslash
+
+\backslash
+second
+\backslash
+
+\backslash
+3rd att}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

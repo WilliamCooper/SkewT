@@ -1,0 +1,673 @@
+%% LyX 2.1.2 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[12pt]{article}
+\usepackage{mathptmx}
+\usepackage[T1]{fontenc}
+\usepackage[letterpaper]{geometry}
+\geometry{verbose,tmargin=3.54cm,bmargin=2.54cm,lmargin=2.54cm,rmargin=2.54cm,headheight=1cm,headsep=2cm,footskip=0.5cm}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\setlength{\parskip}{\medskipamount}
+\setlength{\parindent}{0pt}
+\usepackage{color}
+\usepackage[unicode=true]
+ {hyperref}
+\usepackage{breakurl}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Special footnote code from the package 'stblftnt.sty'
+%% Author: Robin Fairbairns -- Last revised Dec 13 1996
+\let\SF@@footnote\footnote
+\def\footnote{\ifx\protect\@typeset@protect
+    \expandafter\SF@@footnote
+  \else
+    \expandafter\SF@gobble@opt
+  \fi
+}
+\expandafter\def\csname SF@gobble@opt \endcsname{\@ifnextchar[%]
+  \SF@gobble@twobracket
+  \@gobble
+}
+\edef\SF@gobble@opt{\noexpand\protect
+  \expandafter\noexpand\csname SF@gobble@opt \endcsname}
+\def\SF@gobble@twobracket[#1]#2{}
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\input colordvi
+\usepackage{color}
+\fancyhead{}
+\fancyfoot[CE,CO]{}
+\newtoks{\addressee} \global\addressee={}
+\newdimen\longindent \longindent=3.5truein
+\fancyhead[L]{Memo to: \the\addressee \\ \datetoday \\ Page \thepage \hfill}
+\renewcommand{\headrulewidth}{0.0pt}
+\newenvironment{lyxlist}[1]
+{\begin{list}{}
+{\settowidth{\labelwidth}{#1}
+\setlength{\leftmargin}{\labelwidth}
+\addtolength{\leftmargin}{\labelsep}
+\renewcommand{\makelabel}[1]{##1\hfil}}}
+{\end{list}}
+\newcommand{\datetoday}{\number\day\space
+     \ifcase\month\or January\or February\or March\or April\or May\or
+     June\or July\or August\or September\or October\or November\or
+     December\fi
+     \space\number\year}
+\newcommand{\EOLmemo}{\null \vskip-1.5truein
+{\raggedright \textsf{\textsc{\large \textcolor{blue}{Earth Observing Laboratory}}}}\par
+{\raggedright \textsf{\textsl{\textcolor{blue}{Memorandum:}}}} \par \vskip6pt
+{\color{blue}{\hrule}}\par
+\vskip0.3truein \leftline{\hskip \longindent \datetoday} \vskip0.2truein
+\thispagestyle{empty}}
+\newcommand{\attachm}[1]{\begin{lyxlist}{Attachments:00}
+\item [Attachments:] {#1}
+\end{lyxlist}}
+\newcommand{\cc}[1]{\begin{lyxlist}{Attachments:00}
+\item [cc:] {#1}
+\end{lyxlist}}
+\newcommand{\attach}[1]{\begin{lyxlist}{Attachments:00}
+\item [Attachment:] {#1}
+\end{lyxlist}}
+%usage: \encl{A\\B\\C} or \cc{ma,e1\\name2\\name3}
+
+\makeatother
+
+\begin{document}
+\EOLmemo 
+
+\global\addressee={Ranadu documentation}  % >>change "File" to the "To:" name desired
+
+\begin{tabular}{ll}
+\textsf{\textsc{\textcolor{blue}{To:}}} & \the\addressee\tabularnewline
+\textsf{\textsc{\textcolor{blue}{From:}}} & Al Cooper\tabularnewline
+\textsf{\textsc{\textcolor{blue}{Subject:}}} & Skew-T diagram\tabularnewline
+\end{tabular}
+
+\bigskip
+
+<<initialization,echo=FALSE,include=FALSE>>=
+
+thisFileName <- "SkewT"
+require(Ranadu, quietly = TRUE, warn.conflicts=FALSE)
+require(ggplot2)
+require(grid)
+library(knitr)
+require(ggthemes)
+require(vioplot)
+require(plyr)
+opts_chunk$set(echo=FALSE, include=FALSE, fig.lp="fig:", size='footnotesize')
+opts_chunk$set(fig.width=6, fig.height=5, fig.pos="center", digits=4)
+Directory <- DataDirectory ()
+Flight <- "rf16" 				# XXX change this
+Project = "DEEPWAVE"			 # XXX change this
+fname = sprintf("%s%s/%s%s.nc", Directory,Project,Project,Flight)
+Data <- getNetCDF (fname, standardVariables(c("THETAP")))		#XXX set variables needed here
+#SaveRData <- sprintf("%s.Rdata.gz", thisFileName)
+EPS <- StandardConstant ("MWW") / StandardConstant ("MWD")
+TZERO <- StandardConstant("Tzero")
+
+@
+
+
+\section{Introduction and goal}
+
+The skew-T diagram (formally, the Skew-T log-p diagram) and related
+thermodynamic diagrams (tephigram, emagram, Stüve diagram) are standard
+tools for analysis of stability in the atmosphere. There are many
+versions of this diagram available. A fairly recent and very well
+documented source is \href{http://bretwhissel.net/skewt/}{this URL},
+provided by Bret Whissel. Blank diagrams and also source code are
+available here. The Storm Prediction Center, National Centers for
+Environmental Prediction, Norman, OK, uses a sounding analysis system
+called NSHARP, but it has been updated frequently since its introduction
+and I haven't yet learned the details of how it is generated. NCL
+(see \href{https://www.ncl.ucar.edu/Applications/skewt.shtml}{this link})
+provides a skew-T diagram based on the USAF diagram (form dod-wpc
+9-16-1) but this dates back to the 1970s and so probably uses the
+Rossby form for equivalent potential temperature. 
+
+There have been two recent developments that have potential influences
+on the pseudo-adiabats in the skew-T diagram. First, Davies-Jones
+(Davies-Jones, R., 2009: On formulas for equivalent potential temperature.
+Mon. Wea. Review, 137, 3137\textendash{} 3148) developed an improved
+representation for the pseudoadiabatic equivalent potential temperature,
+taking into account factors like the variation of the latent heat
+of vaporization with temperature and making other adjustments. Second,
+Murphy and Koop (Q.~J.~R.~Meteorol.~Soc.~(2005), 131, pp. 1539\textendash 1565)
+developed an improved representation of the equilibrium water vapor
+pressure as a function of temperature. So far as I have been able
+to find, these advances have not been incorporated into thermodynamic
+diagrams that are readily available. Furthermore, any definition of
+pseudo-adiabatic equivalent potential temperature will likely involve
+approximations because the specific heat and latent heat of vaporization
+of water varies with temperature, and the former has not been included
+even in the Davies-Jones formula, which did not use the Murphy-Koop
+representation of equilibrium water vapor pressure. For that reason,
+the goal here is to construct new diagrams based on those two advances
+and compare the results to standard diagrams. For the pseudo-adiabatics,
+the calculation will be based on direct integration of the differential
+equation representing constant entropy, as discussed in a 2011 memo
+referenced from the document ProcessingAlgorithms.pdf.
+
+
+\section{The basic equations and general approach}
+
+
+\subsection{The coordinate transformation}
+
+The basic coordinates in a skew-T log-p diagram are an ordinate that
+is based on the base-10 logarithm of the pressure and isotherms that
+are geometrically at 45$^{\circ}$ slope with respect to both the
+abscissa and ordinate. This leads to an abscissa coordinate that is
+a function of both temperature and pressure and is expressed as a
+value in the range 0--1 (the plot limits):
+
+\begin{equation}
+x=\frac{T-T_{l}}{T_{h}-T_{l}}-\frac{\log_{10}(p/p_{l})}{\log_{10}(p_{l}-p_{h})}\label{eq:x-coordinate}
+\end{equation}
+
+
+where $T$ and $p$ are the respective temperature {[}$^{\circ}$C{]}
+and pressure {[}hPa{]} and \{$T_{l},\, T_{h}$\} and \{$p_{l},\, p_{h}$\}
+are the respective lower and upper limits for temperature along the
+bottom axis and for pressure. For generating the diagram, this is
+coded into a function the provide the abscissa for the plot, as follows:
+
+<<Xplot-function, echo=TRUE, include=TRUE>>=
+# references tBot, tTop, pBot, pTop in global environment!! caution!!
+Xplot <- function (.T, .p) { 
+  return ((.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop))
+}
+@
+
+
+\subsection{Basic lines: isotherms, isobars, dry adiabats}
+
+Plotting the isobars and isotherms is then straightforward. For dry
+adiabats, solving the equation for potential temperature gives the
+following equation for the temperature $T$ corresponding to pressure
+$p$:
+
+\begin{equation}
+T=\left(T_{R}\right)\left(\frac{p}{p_{l}}\right)^{R_{d}/c_{pd}}-T_{0}\label{eq:T-for-pot-T}
+\end{equation}
+where $T_{R}$ is the reference temperature for the potential-temperature
+line (in kelvin) at the lower limit for $p$ (or, conventionally,
+1000\,hPa, where $T_{R}$ is also the potential temperature) and
+$T_{0}$ is 273.15\,K. In this equation, dry-air values are conventionally
+used for the gas constant ($R_{d}$) and the specific heat at constant
+pressure ($c_{pd}$), although this can introduce errors of 1\,K
+or more for moist air. For this reason, it may be helpful to plot
+a range about the dry adiabats to represent this uncertainty, using
+as an indication of error the value of $T$ the difference between
+the above value and that obtained for 100\% relative humidity, using
+the relationship \\
+\[
+\frac{R}{c_{p}}=\frac{R_{d}}{c_{pd}(1+\frac{1}{5}\frac{e}{p})}^{\prime}
+\]
+
+
+where quantities with subscript $d$ refer to dry air and $\epsilon$
+is the ratio of the molecular weight of water to that of dry air (cf.
+ProcessingAlgorithms.pdf, p. 38).
+
+<<basic-lines, echo=TRUE, include=TRUE, fig.keep='all'>>=
+pBot <- 1000
+pTop <- 100
+tTop <- 40
+tBot <- -40
+tMin <- -100
+CP <- SpecificHeats ()
+RoverCP <- CP[3] / CP[1]
+pLevels <- seq (pBot, pTop, by=-50)
+tLevels <- seq (tMin, tTop, by=5)
+
+plot (c (0, 1, 1, 0, 0), c(pBot, pBot, pTop, pTop, pBot), ylim=c(1000,100), log='y', type='l')
+for (p in pLevels) {
+  lines (c(0., 1.), c(p, p))
+}
+for (t in tLevels) {
+  x1 <- Xplot (t, pBot)
+  y1 <- pBot
+  x2 <- x1 + 1
+  y2 <- pTop
+  lines (c(x1, x2), c(y1, y2), col='blue')  
+}
+Theta <- seq (TZERO - 100, TZERO + 200, by=10)
+for (theta in Theta) {
+  x1 <- Xplot(theta / ((1000/pLevels)^RoverCP) - TZERO, pLevels)
+  lines (x1, pLevels, col='orange')
+}
+@
+
+
+\subsection{Mixing ratio}
+
+Lines representing constant mixing ratio on a thermodynamic diagram
+represent the equilibrium value at the specified temperature and pressure,
+and so are often considered in relationship to measurements of dew
+point in sounding plots. Expressed in units of grams per kilogram
+of dry air, the mixing ratio $\mathrm{MR}$ for moist air in equilibrium
+with a plane water surface at temperature $T$ and pressure $p$ is
+
+\begin{equation}
+\mathrm{MR=1000\thinspace\epsilon\frac{e_{s}(T)}{(p-e_{s}(T))}}\label{eq:MR}
+\end{equation}
+
+
+where $e_{s}(T)$ is the equilibrium water vapor pressure. Given a
+specified value of $\mathrm{MR}$, the value of $T$ giving that mixing
+ratio at a specified pressure can be found numerically by solving
+\[
+\mathrm{MR-1000\thinspace\epsilon\frac{e_{s}(T)}{(p-e_{s}(T))}=0}
+\]
+
+
+numerically, varying $T$ with $p$ amd $\mathrm{MR}$ fixed. The
+R routine 'nleqslv' is used here to find the temperature, which can
+be used with (\ref{eq:x-coordinate}) to find the plotted abscissa
+coordinate. This is implemented using this function in the call to
+'nleqslv':
+
+<<mr-fn, echo=-1:-3, include=TRUE>>=
+# note: this omits the enhancement factor, as is conventional def. of eq. vapor pressure
+TfromRmix <- function (.T, .rMix, .P) {
+  return (.rMix - MixingRatio (MurphyKoop (.T) / .P))
+}
+@
+
+Using this function with calls to 'nleqslv' for a sequence of pressures
+gives a sequence of temperatures and hence a sequence of plot points
+for constructing the diagram.
+
+<<mixing-ratio-lines, echo=TRUE, include=TRUE, echo=-1>>=
+<<basic-lines>>
+rMix <- c(0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1., 3., 5, seq (5, 30, by=5)) * 0.001
+tt <- pLevels  # overwritten below, just a quick allocation
+for (rmix in rMix) {
+  for (i in 1:length (pLevels)) {
+    tt[i] <- nleqslv::nleqslv (10., TfromRmix, jac=NULL, rmix, pLevels[i])$x
+  }
+  lines (Xplot (tt, pLevels), pLevels, col='darkgreen', lty=2)
+}
+@
+
+
+\subsection{Pseudo-adiabatic equivalent potential temperature%
+\footnote{Sometimes called, incorrectly, pseudo-equivalent potential temperature
+(it is pseudo-adiabatic in the sense that all water condensate is
+removed as it appears) or equivalent potential temperature (a term
+better understood to refer to the true adiabatic process).%
+}}
+
+The representation of pseudo-adiabats can be done in two ways, either
+via the formula of Davies-Jones (2009), as presented in ProcessingAlgorithms.pdf,
+p.~50, or by direct integration of the differential equation obtained
+by setting the total derivative of entropy with pressure to zero.
+Previous integrations, discussed in the memo referenced above, demonstrate
+good agreement between these two approaches, but the direct integration
+is more basic and is the test against which the Davies-Jones formula
+was developed so that will be used here.
+
+For integrations that include representations of the temperature dependence
+of the specific heats and latent heat as well as the Murphy and Koop
+(2006) representation of equilibrium water vapor pressure, the appropriate
+differential form of the entropy can be used to find the pseudo-adiabatic
+(or adiabatic) derivative of temperature with respect to pressure.
+For an adiabatic process where all changes occur in equilibrium, the
+molar entropy $s^{\prime}$ is related to temperature $T$ and pressure
+$p$ (for a perfect gas) via
+
+\begin{equation}
+Tds^{\prime}=c_{p}^{\prime}dT-v^{\prime}dp\label{eq:2ndLaw}
+\end{equation}
+
+
+where primed quantities refer to molar quantities, such that $c_{p}^{\prime}$
+and $v^{\prime}$are the molar heat capacity at constant pressure
+and the molar volume, respectively. There are three contributions
+to the entropy to consider for a moist air parcel: the entropy of
+the (i) dry air; (ii) water vapor; and (iii) liquid water. If the
+respective mole numbers of these three components are $n_{d}^{\prime}$,
+$n_{v}^{\prime}$, and $n_{w}^{\prime}$, then
+
+\begin{equation}
+Tds^{\prime}=(n_{d}^{\prime}c_{pd}^{\prime}+n_{v}^{\prime}c_{pv}^{\prime}+n_{w}^{\prime}c_{w}^{\prime})dT-n_{d}^{\prime}v_{d}^{\prime}dp_{d}-n_{v}^{\prime}v_{v}^{\prime}de+L_{v}^{\prime}dn_{v}^{\prime}\label{eq:EntropySum}
+\end{equation}
+where $p_{d}$ is the pressure of dry air, $e$ is the water vapor
+pressure, and $L_{v}^{\prime}$ is the molar latent heat of vaporization
+of liquid water. The last term in (\ref{eq:EntropySum}) arises because
+there is an entropy change associated with the phase change from liquid
+water to water vapor, and this last term is the heat released by that
+phase change.%
+\footnote{An additional contribution arises from the entropy increase associated
+with mixing of the water vapor and the dry air, but this is insignificant
+and will be neglected.%
+} The other terms arise from summing (\ref{eq:2ndLaw}) for the three
+individual components.
+
+The mixing ratios $r$ and$r_{w}$ are, respectively, the masses of
+water vapor and liquid water per unit mass of dry air:
+
+\begin{eqnarray}
+r & = & \frac{n_{v}^{\prime}M_{w}}{n_{d}^{\prime}M_{d}}\nonumber \\
+r_{w} & = & \frac{n_{w}^{\prime}M_{w}}{n_{d}^{\prime}M_{d}}\label{eq:MixingRatioDefs}
+\end{eqnarray}
+
+
+where $M_{w}$ is the molecular weight of water (mass of water per
+mole) and $M_{d}$ that of dry air. Dividing (\ref{eq:EntropySum})
+by $n_{d}^{\prime}M_{d}T$ and setting $ds^{\prime}$ to zero for
+an isentropic process leads to
+
+\begin{equation}
+(c_{pd}+rc_{pv}+r_{w}c_{w})\frac{dT}{T}-\frac{v_{d}}{T}dp_{d}-r\frac{v_{v}}{T}de+\frac{L_{v}}{T}dr=0\label{eq:DiffForm1}
+\end{equation}
+
+
+where unprimed quantities $c_{pd}$, $c_{pv}$, $c_{w}$, $v_{d}$,
+$v_{v}$, and $L_{v}$ are specific quantities (i.e., per unit mass
+of dry air for $c_{pd}$ and $v_{d}$ and per unit mass of water for
+$c_{pv}$, $c_{w}$, $v_{v}$ and $L_{v}$; e.g., $c_{pd}=c_{pd}^{\prime}/M_{d}$
+and $c_{pv}=c_{pv}^{\prime}/M_{w}$). For perfect gases, $v_{d}/T=R_{d}/p_{d}$
+and $v_{v}/T=R_{w}/e$ where $R_{d}$ and $R_{w}$ are the gas constants
+for dry air and water vapor, respectively. Also, the ideal-gas form
+of the Clausius-Clapeyron equation is 
+
+\begin{equation}
+\frac{de_{s}}{e_{s}}=\frac{L_{v}dT}{R_{w}T^{2}}\label{eq:Clausius-Clapeyron}
+\end{equation}
+
+
+and Kirchhoff's equation (cf., e.g., Emanuel 1994, Eq.~4,4,3) is
+
+\begin{equation}
+dL_{V}=(c_{pv}-c_{w})\, dT\,\,.\label{eq:Kirchhoff}
+\end{equation}
+
+
+With $e=e_{s}(T)$ and $r=r_{s}(T)=\frac{M_{w}}{M_{d}}e_{s}(T)/p_{d}$
+as corresponds to a saturated parcel, and with some additional transformations
+as follow, all terms in (\ref{eq:DiffForm1}) can be transformed into
+differential relationships that only involve derivatives of T and
+p:
+
+\[
+\frac{L_{v}dr}{T}=\frac{d(L_{v}r)}{T}-r\frac{dL_{v}}{dT}\frac{dT}{T}=\frac{d(L_{v}r)}{T}-r(c_{pv}-c_{w})\frac{dT}{T}
+\]
+
+
+\[
+rR_{w}\frac{de_{s}}{e_{s}}=rR_{w}\frac{L_{vdT}}{R_{w}T^{2}}=\frac{L_{v}r}{T}\frac{dT}{T}
+\]
+
+
+\[
+\frac{d(L_{v}r)}{T}=d\left(\frac{L_{v}r}{T}\right)+\frac{L_{v}r}{T}\frac{dT}{T}
+\]
+
+
+\[
+d\left(\frac{L_{v}r}{T}\right)=\left(\frac{\partial\left(\frac{L_{v}r}{T}\right)}{\partial T}\right)_{p_{d}}dT+\left(\frac{\partial\left(\frac{L_{v}r}{T}\right)}{\partial p_{d}}\right)_{T}dp_{d}=\frac{\epsilon T\, d\left(\frac{L_{v}e_{s}(T)}{T}\right)}{p_{d}dT}\frac{dT}{T}-\frac{L_{v}r}{T}\frac{dp_{d}}{p_{d}}
+\]
+
+
+where the transformation to dependence on $T$ is a consequence of
+assuming that the parcel remains saturated, and where the temperature
+dependence of $L_{v}$ and the specific heats is implicit. Gathering
+terms in (\ref{eq:DiffForm1}) after these transformations leads to
+
+\[
+\left[(c_{pd}+r_{t}c_{w})+\frac{T\epsilon}{p_{d}}\left(\frac{\partial\left(\frac{L_{v}e_{s}(T)}{T}\right)}{\partial T}\right)_{p_{d}}\right]\frac{dT}{T}=\left[R_{d}+\frac{L_{v}r}{T}\right]\frac{dp_{d}}{p_{d}}
+\]
+
+
+where $r_{t}=r+r_{w}$ is the total water mixing ratio and where $\epsilon=M_{w}/M_{d}$.
+The result then gives a relationship between $T$ and $p_{d}$:
+
+\begin{equation}
+\frac{dT}{dp_{d}}=\frac{TR_{d}+L_{v}r}{p_{d}}\,\left[(c_{pd}+r_{t}c_{w})+\frac{T\epsilon}{p_{d}}\left(\frac{\partial\left(\frac{L_{v}e_{s}(T)}{T}\right)}{\partial T}\right)_{p_{d}}\right]^{-1}\label{eq:dTdp}
+\end{equation}
+
+
+The result is a derivative that can be used for numerical integrations
+that take into account the temperature dependence of the specific
+heats and the latent heat of vaporization and improved representation
+of the equilibrium vapor pressure $e_{s}(T)$, as in Murphy and Koop
+(2006). This is also used below to evaluate the accuracy of representations
+of the equivalent potential temperatures. 
+
+Equation (\ref{eq:dTdp}) is appropriate for the adiabatic process
+and so can lead to the wet-equivalent potential temperature $\Theta_{q}$.
+The similar formula for the pseudo-adiabatic equivalent potential
+temperature $\Theta_{p}$ can be obtained by neglecting the heat capacity
+of the liquid water, and so would be the same as (\ref{eq:dTdp})
+but with $r_{t}$ replaced by $r$. 
+
+The pseudo-adiabats are then constructed by integration of (\ref{eq:dTdp})
+either upward from a fixed starting point at 1000 hPa (which would
+represent the wet-bulb pseudo-adiabatic potential temperature) or
+starting from a pressure where humidity is negligible (which would
+result in pseudo-adiabats labeled by their value equivalent to potential
+temperature after all water is condensed). Here the former is chosen.
+The integration is performed using the following R code:
+
+<<integration-step, echo=TRUE, include=TRUE>>=
+# this chunk includes functions including one to integrate between two levels
+# if the specific-heat-of-liquid-water data have not been read, read and store them
+if (file.exists ("./SpecificHeatWater.Rdata")) {
+  load ("./SpecificHeatWater.Rdata") # reloads cw.table
+} else {
+  cw.table <- read.table ("./MurphyKoopFig6.txt", sep=',', col.names=c("ID", "T", "cw"))
+  cw.table$cw[cw.table$ID == 'n'] <- cw.table$cw[cw.table$ID == 'n'] / StandardConstant("MWW")
+  save (cw.table, file="./SpecificHeatWater.Rdata")
+}
+CWData <- cw.table [ , 2:3]
+CWData <- CWData[order(CWData), ]
+CWData <- CWData[!is.na(CWData[ ,1]), ]
+load ("./CPV.Rdata")
+  
+LatentHeatApprox <- function (.T) {  # input in deg.C
+  return (2.501e6 - 2370 * .T)
+}
+CPWaterVapor <- function (.T) {
+  tk <- .T + TZERO
+  # note that there was an error in this formula in the earlier ThetaE memo, 3 Jan 2011
+  return (1000 * LagrangeInterpolate (tk, 4, CPV))
+}
+SpecificHeatLiquidWater <- function (.T) {
+  tk <- .T + TZERO
+  return (1000. * LagrangeInterpolate (tk, 4, CWData))
+}
+# not used; here for reference
+LCLfn <- function (.p, RbyCP, thetam, mr) {  # used by LCL function call to nleqslv
+  tt <- thetam / (1000/.p)^RbyCP
+  ee <- MurphyKoop (tt-TZERO)
+  return (ee - mr * .p / (mr + StandardConstant("MWW")/StandardConstant("MWD")))
+}
+
+# not used; here for reference; for pseudoadiabat, always at 100% RH
+LCL <- function (.RH, .T, .p) {  # .RH in a fraction (not %), .T in deg.C, .p in hPa
+  et <- .RH * MurphyKoop (.T)
+  mr <- MixingRatio (et/.p)
+  CPM <- SpecificHeats (et/.p)
+  RbyCP <- CPM[3] / CPM[1]
+  thetam <- .T+TZERO * (1000 / .p)^RbyCP
+  pLCL <- nleqslv::nleqslv (.p, LCLfn, jac=NULL, RbyCP, thetam, mr)
+  tLCL <- thetam / (1000/pLCL)^RbyCP
+  return (data.frame ("pLCL"=pLCL, "tLCL"=tLCL))
+}
+
+deriv1 <- function (.T, .LV) { # evaluate last partial deriv. in (10)
+  delt <- 0.1
+  tc <- .T + delt
+  LVp <- .LV + (CPWaterVapor(tc)-SpecificHeatLiquidWater(tc)) * delt
+  esp <- MurphyKoop (tc)
+  delp <- LVp * esp / (.T + delt + TZERO)
+  tc <- .T - delt
+  LVm <- .LV - (CPWaterVapor(tc)-SpecificHeatLiquidWater(tc)) * delt
+  esm <- MurphyKoop (tc)
+  delm <- LVm * esm / (.T - delt + TZERO)
+  return ((delp-delm) / (2*delt))
+}
+
+dTdpdF <- function (.T, .pd, .LV, .rtot=NA, .aflag=FALSE) {
+  e <- MurphyKoop (.T)
+  p <- .pd + e
+  if (.aflag) {  # adiabatic
+    rx <- .rtot
+  } else {
+    rx <- MixingRatio (e/p)
+  }
+  tk <- .T + TZERO
+  cp_x <- CP[1] + rx * SpecificHeatLiquidWater(.T)
+  A <- ((tk*SpecificHeats(0)[3]+.LV*MixingRatio(e/p))/.pd) /
+       (cp_x + (EPS * tk / .pd) * deriv1 (.T, .LV))  
+  return (A)
+}
+
+# integration step: call repeatedly to construct plottable profile
+# tk	Initial temperature, kelvin
+# p1	Initial pressure, hPa
+# p2	 Final pressure, hPa
+# value returned, temperature at p2
+# aflag  FALSE for pseudoadiabatic, adiabatic otherwise
+IntegrationStep <- function (tc, pd1, pd2, rtot, aflag) {
+  nsteps <- 2
+  delpd <- (pd1 - pd2) / nsteps
+  pd <- pd1
+  tk <- tc + TZERO
+  e <- MurphyKoop (tc)
+  p <- pd + e
+  r <- MixingRatio (e/p)
+  
+  # ready to calculate the derivative dT/dp_d, adiabatic and pseudo-adiabatic cases
+  while (pd > pd2) {
+    if ((pd-delpd) < pd2) {delpd <- pd-pd2}
+    dTdpd <- dTdpdF (tc, pd, LV, rtot, aflag) # wet-adiabatic version if aflag TRUE
+    tch <- tc - dTdpd * delpd/2
+    ex <- MurphyKoop (tch)
+    LVh <- LV - (CPWaterVapor (tch) - SpecificHeatLiquidWater (tch)) * dTdpd * delpd / 2
+    dTdpd <- dTdpdF (tch, pd-delpd/2, LVh, rtot, aflag)
+    tc <- tc - dTdpd * delpd  # take full step with derivative evaluated half-step
+    pd <- pd - delpd
+    LV <- LV + (CPWaterVapor (tch) - SpecificHeatLiquidWater (tch)) * dTdpd * delpd
+  }
+  return (tc)
+}
+@
+
+<<THETA-P, echo=TRUE, include=TRUE, echo=-2, fig.height=6>>=
+<<basic-lines>>
+<<mixing-ratio-lines>>
+
+## first show conventional solution
+TWB <- seq (tBot, tTop, by=5)
+ThetaE <- EquivalentPotentialTemperature (1000., TWB, MurphyKoop(TWB))
+TfromEPT <- function (.T, .thetaE, .P) {
+  e <- MurphyKoop (.T)
+  r <- MixingRatio (e / .P)
+  lhv <- 2.501e6 - 2370. * .T    # latent heat of vaporization, temp-dependent
+  expn=lhv * r / (CP[1] * (TZERO + .T))
+  return (.thetaE - (TZERO+.T)*(1000/(.P-e))^RoverCP * exp(expn))
+}
+tt <- pLevels  # shortut to define new vector
+for (thetaE in ThetaE) {
+  for (i in 1:length(pLevels)) {
+    tt[i] <- nleqslv::nleqslv (10., TfromEPT, jac=NULL, thetaE, pLevels[i])$x
+  }
+  lines (Xplot (tt, pLevels), pLevels, col='cyan')
+}
+# this is solution of Davies-Jones formula; do integration later
+DJTfromEPT <- function (.T, .thetaE, .P) {
+  L0 <- 2.56313e6
+  L1 <- 1754.
+  K2 <- 1.137e6
+  TK <- .T + TZERO
+  e <- MurphyKoop (.T)
+  r <- MixingRatio (e/.P) 
+  CP <- SpecificHeats(0.)     # need dry-air value, don't need vector
+  TL = 2840./(3.5*log(TK)-log(e)-4.805)+55.
+  TDL <- TK * (1000./(.P-e))**0.2854*(TK/TL)**(0.28e-3*r)
+  THETAP <- TDL * exp (r*(L0-L1*(TL-TZERO)+K2*r)/(CP[1]*TL))
+  return (.thetaE - THETAP)
+}
+for (thetaE in ThetaE) {
+  for (i in 1:length(pLevels)) {
+    tt[i] <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaE, pLevels[i])$x
+  }
+  lines (Xplot (tt, pLevels), pLevels, col='red', lty=2, lwd=1.5)
+}
+TQfromWBPT <- function (.T, .ThetaQ, .P) {
+  return (.ThetaQ - WetEquivalentPotentialTemperature (.P, .T, MurphyKoop(.T)))
+}
+
+# now add lines obtained by integration:
+CP <- SpecificHeats(0)
+for (twb in TWB[15]) {
+  p1 <- pBot - MurphyKoop (twb)
+  ptLevels <- pLevels
+  ptLevels[1] <- pBot
+  rtot <- MixingRatio (MurphyKoop (twb) / pBot)
+  LV <- LatentHeatApprox (twb)
+  tt[1] <- twb
+  for (i in 1:(length(pLevels)-1)) {
+    tt[i+1] <- IntegrationStep (tt[i], p1, pLevels[i+1], rtot, aflag=FALSE)
+    p1 <- pLevels[i+1]
+    tch <- (tt[i+1]+tt[i])/2
+    LV <- LV + (CPWaterVapor (tch) - SpecificHeatLiquidWater (tch)) * (tt[i+1]-tt[i])
+  }
+  ptLevels <- pLevels + MurphyKoop(tt)
+  ptLevels[1] <- pBot
+  lines (Xplot (tt, ptLevels), ptLevels, col='brown', lty=2, lwd=3)
+}
+
+# add a wet-adiabat
+ThetaQ <- WetEquivalentPotentialTemperature (1000, TWB[15], MurphyKoop(TWB[15]))
+for (i in 1:length(pLevels)) {
+  tt[i] <- nleqslv::nleqslv (10., TQfromWBPT, jac=NULL, ThetaQ, pLevels[i])$x
+}
+lines (Xplot (tt, pLevels), pLevels, col='purple', lty=1, lwd=6)
+
+@
+
+\begin{center}
+\textsf{\textcolor{blue}{-- End of Memo --}}
+\par\end{center}
+
+Reproducibility:
+
+\begin{tabular}{ll}
+\textsf{\textsc{\textcolor{blue}{Project:}}} & \Sexpr{thisFileName}\tabularnewline
+\textsf{\textsc{\textcolor{blue}{Archive package:}}} & \Sexpr{thisFileName}.zip\tabularnewline
+\textsf{\textsc{\textcolor{blue}{Contains:}}} & attachment list below\tabularnewline
+\textsf{\textsc{\textcolor{blue}{Program:}}} & \Sexpr{thisFileName}.Rnw\tabularnewline
+\textsf{\textsc{\textcolor{blue}{Original Data:}}} & /scr/raf\_data/\Sexpr{Project}/\Sexpr{Flight}.nc \tabularnewline
+\textsf{\textsc{\textcolor{blue}{Git:}}} & git@github.com:WilliamCooper/\Sexpr{thisFileName}.git\tabularnewline
+\end{tabular}
+
+\attachm{\Sexpr{thisFileName}.Rnw\\\Sexpr{thisFileName}.pdf\\SessionInfo}
+%\cc{first attachment\\second\\3rd att}
+%\attach{attachment}
+%\attachm{first\\second} %\cc{first attachment\\second\\3rd att}
+<<save-system-info, echo=FALSE>>= 
+cat (toLatex(sessionInfo()), file="SessionInfo")
+
+@ 
+<<make-zip-archive, echo=TRUE, INCLUDE=TRUE>>=
+system (sprintf("zip %s.zip %s.Rnw %s.pdf SessionInfo", thisFileName, thisFileName, thisFileName))
+
+@ 
+
+%\attach{attachment}
+
+\attachm{ProgramFile\\Document.pdf}
+
+%\cc{first attachment\\second\\3rd att}
+\end{document}
