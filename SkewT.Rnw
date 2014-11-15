@@ -118,7 +118,7 @@ TZERO <- StandardConstant("Tzero")
 \section{Introduction and goal}
 
 The skew-T diagram (formally, the Skew-T log-p diagram) and related
-thermodynamic diagrams (tephigram, emagram, Stüve diagram) are standard
+thermodynamic diagrams (tephigram, emagram, St?ve diagram) are standard
 tools for analysis of stability in the atmosphere. There are many
 versions of this diagram available. A fairly recent and very well
 documented source is \href{http://bretwhissel.net/skewt/}{this URL},
@@ -600,12 +600,17 @@ DJTfromEPT <- function (.T, .thetaE, .P) {
 }
 for (thetaE in ThetaE) {
   for (i in 1:length(pLevels)) {
-    tt[i] <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaE, pLevels[i])$x
+    tt[i] <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, 
+                               thetaE, pLevels[i])$x
   }
   lines (Xplot (tt, pLevels), pLevels, col='red', lty=2, lwd=1.5)
 }
-TQfromWBPT <- function (.T, .ThetaQ, .P) {
-  return (.ThetaQ - WetEquivalentPotentialTemperature (.P, .T, MurphyKoop(.T)))
+TQfromWBPT <- function (.T, .ThetaQ, .P, .rtot) {
+  e <- MurphyKoop (.T)
+  r <- MixingRatio (e / .P)
+ lwc <- ifelse ((.rtot > r), 1000 * (.rtot - r) * (100 * (.P-e) / 
+                            (SpecificHeats(0)[3] * (.T+TZERO))), 0.)
+  return (.ThetaQ - WetEquivalentPotentialTemperature (.P, .T, 0, lwc))
 }
 
 # now add lines obtained by integration:
@@ -629,9 +634,10 @@ for (twb in TWB[15]) {
 }
 
 # add a wet-adiabat
-ThetaQ <- WetEquivalentPotentialTemperature (1000, TWB[15], MurphyKoop(TWB[15]))
+ThetaQ <- WetEquivalentPotentialTemperature (1000, TWB[15])
+rTot <- MixingRatio (MurphyKoop (TWB[15]) / 1000)
 for (i in 1:length(pLevels)) {
-  tt[i] <- nleqslv::nleqslv (10., TQfromWBPT, jac=NULL, ThetaQ, pLevels[i])$x
+  tt[i] <- nleqslv::nleqslv (10., TQfromWBPT, jac=NULL, ThetaQ, pLevels[i], rTot)$x
 }
 lines (Xplot (tt, pLevels), pLevels, col='purple', lty=1, lwd=6)
 
