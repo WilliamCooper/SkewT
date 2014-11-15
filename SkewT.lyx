@@ -401,7 +401,7 @@ target "http://bretwhissel.net/skewt/"
  The Storm Prediction Center, National Centers for Environmental Prediction,
  Norman, OK, uses a sounding analysis system called NSHARP, but it has been
  updated frequently since its introduction and I haven't yet learned the
- details of how it is generated.
+ details of how it currently is generated.
  NCL (see 
 \begin_inset CommandInset href
 LatexCommand href
@@ -454,7 +454,7 @@ Soc.
  into thermodynamic diagrams that are readily available.
  Furthermore, any definition of pseudo-adiabatic equivalent potential temperatur
 e will likely involve approximations because the specific heat and latent
- heat of vaporization of water varies with temperature, and the former has
+ heat of vaporization of water vary with temperature, and the former has
  not been included even in the Davies-Jones formula, which did not use the
  Murphy-Koop representation of equilibrium water vapor pressure.
  For that reason, the goal here is to construct new diagrams based on those
@@ -487,7 +487,7 @@ ally at 45
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-x=\frac{T-T_{l}}{T_{h}-T_{l}}-\frac{\log_{10}(p/p_{l})}{\log_{10}(p_{l}-p_{h})}\label{eq:x-coordinate}
+x=\frac{T-T_{l}}{T_{h}-T_{l}}-\frac{\log_{10}(p/p_{l})}{\log_{10}(p_{l}/p_{h})}\label{eq:x-coordinate}
 \end{equation}
 
 \end_inset
@@ -516,10 +516,10 @@ C] and pressure [hPa] and {
 \begin_inset Formula $p_{l},\, p_{h}$
 \end_inset
 
-} are the respective lower and upper limits for temperature along the bottom
- axis and for pressure.
- For generating the diagram, this is coded into a function the provide the
- abscissa for the plot, as follows:
+} are the respective lower and upper limits for temperature along the abscissa
+ and ordinate.
+ For generating the diagram, this is coded into a function that provides
+ the abscissa for the plot, as follows:
 \end_layout
 
 \begin_layout Standard
@@ -528,22 +528,45 @@ status open
 
 \begin_layout Plain Layout
 
-<<Xplot-function, echo=TRUE, include=TRUE>>=
+<<XYplot-function, echo=TRUE, include=TRUE>>=
 \end_layout
 
 \begin_layout Plain Layout
 
-# references tBot, tTop, pBot, pTop in global environment!! caution!!
+####
 \end_layout
 
 \begin_layout Plain Layout
 
-Xplot <- function (.T, .p) { 
+##  given temperature (deg.C) and pressure (hPa), generates the appropriate
+ abscissa coordinate
 \end_layout
 
 \begin_layout Plain Layout
 
-  return ((.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop))
+##  and returns that along with the original pressure is a vector suitable
+ for plotting.
+\end_layout
+
+\begin_layout Plain Layout
+
+####
+\end_layout
+
+\begin_layout Plain Layout
+
+# references tBot, tTop, pBot, pTop in the global environment!! caution!!
+\end_layout
+
+\begin_layout Plain Layout
+
+XYplot <- function (.T, .p) { 
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (data.frame(X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop),
+ Y=.p))
 \end_layout
 
 \begin_layout Plain Layout
@@ -744,12 +767,16 @@ for (p in pLevels) {
 
 \begin_layout Plain Layout
 
+\end_layout
+
+\begin_layout Plain Layout
+
 for (t in tLevels) {
 \end_layout
 
 \begin_layout Plain Layout
 
-  x1 <- Xplot (t, pBot)
+  x1 <- XYplot (t, pBot)[1]
 \end_layout
 
 \begin_layout Plain Layout
@@ -784,17 +811,13 @@ Theta <- seq (TZERO - 100, TZERO + 200, by=10)
 
 \begin_layout Plain Layout
 
-for (theta in Theta) {
+for (theta in seq (TZERO - 100, TZERO + 200, by=10)) {
 \end_layout
 
 \begin_layout Plain Layout
 
-  x1 <- Xplot(theta / ((1000/pLevels)^RoverCP) - TZERO, pLevels)
-\end_layout
-
-\begin_layout Plain Layout
-
-  lines (x1, pLevels, col='orange')
+  lines (XYplot (theta / ((1000/pLevels) ^ RoverCP) - TZERO, pLevels), col='oran
+ge')
 \end_layout
 
 \begin_layout Plain Layout
@@ -993,7 +1016,7 @@ for (rmix in rMix) {
 
 \begin_layout Plain Layout
 
-  lines (Xplot (tt, pLevels), pLevels, col='darkgreen', lty=2)
+  lines (XYplot (tt, pLevels), col='darkgreen', lty=2)
 \end_layout
 
 \begin_layout Plain Layout
@@ -2167,7 +2190,7 @@ for (thetaE in ThetaE) {
 
 \begin_layout Plain Layout
 
-  lines (Xplot (tt, pLevels), pLevels, col='cyan')
+  lines (XYplot (tt, pLevels), col='cyan')
 \end_layout
 
 \begin_layout Plain Layout
@@ -2267,7 +2290,7 @@ for (thetaE in ThetaE) {
 
 \begin_layout Plain Layout
 
-  lines (Xplot (tt, pLevels), pLevels, col='red', lty=2, lwd=1.5)
+  lines (XYplot (tt, pLevels), col='red', lty=2, lwd=1.5)
 \end_layout
 
 \begin_layout Plain Layout
@@ -2402,7 +2425,7 @@ t[i])
 
 \begin_layout Plain Layout
 
-  lines (Xplot (tt, ptLevels), ptLevels, col='brown', lty=2, lwd=3)
+  lines (XYplot (tt, ptLevels), col='brown', lty=2, lwd=3)
 \end_layout
 
 \begin_layout Plain Layout
@@ -2447,7 +2470,7 @@ for (i in 1:length(pLevels)) {
 
 \begin_layout Plain Layout
 
-lines (Xplot (tt, pLevels), pLevels, col='purple', lty=1, lwd=6)
+lines (XYplot (tt, pLevels), col='purple', lty=1, lwd=6)
 \end_layout
 
 \begin_layout Plain Layout
