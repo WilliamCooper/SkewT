@@ -120,8 +120,81 @@ DLPLT3 <- DLPLT[DLPLT$X <= 0, ]
 DLPLT3 <- DLPLT3[DLPLT3$X > -1, ]
 g <- g + geom_text (data=DLPLT3, aes(x=X+1, y=2, label=LABEL, angle=45, hjust=-0.2, vjust=0.2),
                     size=3.5)
+## add variables from SkewTData:
+SkewTData$P[SkewTData$P > pBot] <- NA
+SkewTData$P[SkewTData$P < pTop] <- NA
+## convert everything to plot coordinates
+for (name in names(SkewTData)) {
+  if (name == 'P') {next}
+  SkewTData[, name] <- XYplot (SkewTData[, name], SkewTData$P)$X
+}
+SkewTData$P <- log10(SkewTData$P)
 
+## mixing-ratio lines
+xmr <- vector ()
+ymr <- vector ()
+for (name in names(SkewTData)) {
+  if (grepl ("MR", name)) {
+    v <- sub ("MR", "", name)
+    val <- as.numeric (v)
+    Valid <- SkewTData[,name] <= 1
+    Valid[SkewTData[,name] < 0] <- FALSE
+    SkewTData[, name][!Valid] <- NA
+    xmr <- c(xmr, SkewTData[, name])
+    ymr <- c(ymr, SkewTData$P)
+  }
+}
+MRDF <- data.frame (X=xmr, Y=ymr)
+g <- g + geom_path (data=MRDF, aes(x=X, y=Y), color='darkgreen', lty=4, lwd=0.8)
 
+## potential temperature lines
+xmth <- vector ()
+ymth <- vector ()
+for (name in names(SkewTData)) {
+  if (grepl ("Theta", name)) {
+    if (grepl ("R", name) || grepl ("B", name) || grepl ("P", name) || 
+          grepl("I", name)) {next}
+    v <- sub ("Theta", "", name)
+    val <- as.numeric (v)
+    Valid <- SkewTData[,name] <= 1
+    Valid[SkewTData[,name] < 0] <- FALSE
+    SkewTData[, name][!Valid] <- NA
+    xmth <- c(xmth, SkewTData[, name])
+    ymth <- c(ymth, SkewTData$P)
+  }
+}
+MRDFTH <- data.frame (X=xmth, Y=ymth)
+g <- g + geom_path (data=MRDFTH, aes(x=X, y=Y), color='darkorange', lty=1, lwd=0.4)
 
+## equivalent potential temperature (integration results)
+xmI <- vector ()
+ymI <- vector ()
+for (name in names(SkewTData)) {
+  if (grepl ("ThetaI", name)) {
+    v <- sub ("Theta", "", name)
+    val <- as.numeric (v)
+    Valid <- SkewTData[,name] <= 1
+    Valid[SkewTData[,name] < 0] <- FALSE
+    SkewTData[, name][!Valid] <- NA
+    xmI <- c(xmI, SkewTData[, name])
+    ymI <- c(ymI, SkewTData$P)
+  }
+}
+MRDFI <- data.frame (X=xmI, Y=ymI)
+g <- g + geom_path (data=MRDFI, aes(x=X, y=Y), color='red', lty=1, lwd=0.4)
 
+## plot a sample sounding
+Directory <- DataDirectory ()
+Flight <- "rf16"   			# XXX change this
+Project = "DEEPWAVE"			 # XXX change this
+fname = sprintf("%s%s/%s%s.nc", Directory,Project,Project,Flight)
+Data <- getNetCDF (fname, standardVariables(c("THETAP")))		#XXX set variables needed here
+r <- setRange (Data$Time, 123100, 125500)
+DS <- Data[r, c("PSXC", "ATX", "DPXC")]
+DP <- data.frame (P=XYplot (DS$ATX, DS$PSXC)$Y, ATX=XYplot (DS$ATX, DS$PSXC)$X, DPXC=XYplot(DS$DPXC, DS$PSXC)$X)
+g <- g+geom_path (data=DP, aes(x=ATX, y=P, color='ATX'), lwd=1.5)
+g <- g+geom_path (data=DP, aes(x=DPXC, y=P, color='DPXC'), lwd=1.5)
+g <- g + theme(legend.position=c(0.2,0.85), legend.background=element_rect(fill="white"))
+g <- g + labs(color='Measurement')
+g <- g + scale_colour_manual(name = "Measurement",values = c('black', 'darkgreen'))
 print(g)
