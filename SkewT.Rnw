@@ -103,6 +103,7 @@ require(vioplot)
 require(plyr)
 opts_chunk$set(echo=FALSE, include=FALSE, fig.lp="fig:", size='footnotesize')
 opts_chunk$set(fig.width=6, fig.height=5, fig.pos="center", digits=4)
+## read a file for access to sample data
 Directory <- DataDirectory ()
 Flight <- "rf16" 				# XXX change this
 Project = "DEEPWAVE"			 # XXX change this
@@ -118,16 +119,16 @@ TZERO <- StandardConstant("Tzero")
 \section{Introduction and goal}
 
 The skew-T diagram (formally, the Skew-T log-p diagram) and related
-thermodynamic diagrams (tephigram, emagram, St?ve diagram) are standard
-tools for analysis of stability in the atmosphere. There are many
-versions of this diagram available. A fairly recent and very well
-documented source is \href{http://bretwhissel.net/skewt/}{this URL},
+thermodynamic diagrams (tephigram, emagram, pastagram, aerogram, Stüve
+diagram) are standard tools for analysis of stability in the atmosphere.
+There are many versions of this diagram available. A fairly recent
+and very well documented source is \href{http://bretwhissel.net/skewt/}{this URL},
 provided by Bret Whissel. Blank diagrams and also source code are
 available here. The Storm Prediction Center, National Centers for
 Environmental Prediction, Norman, OK, uses a sounding analysis system
 called NSHARP, but it has been updated frequently since its introduction
-and I haven't yet learned the details of how it is generated. NCL
-(see \href{https://www.ncl.ucar.edu/Applications/skewt.shtml}{this link})
+and I haven't yet learned the details of how it currently is generated.
+NCL (see \href{https://www.ncl.ucar.edu/Applications/skewt.shtml}{this link})
 provides a skew-T diagram based on the USAF diagram (form dod-wpc
 9-16-1) but this dates back to the 1970s and so probably uses the
 Rossby form for equivalent potential temperature. 
@@ -146,7 +147,7 @@ to find, these advances have not been incorporated into thermodynamic
 diagrams that are readily available. Furthermore, any definition of
 pseudo-adiabatic equivalent potential temperature will likely involve
 approximations because the specific heat and latent heat of vaporization
-of water varies with temperature, and the former has not been included
+of water vary with temperature, and the former has not been included
 even in the Davies-Jones formula, which did not use the Murphy-Koop
 representation of equilibrium water vapor pressure. For that reason,
 the goal here is to construct new diagrams based on those two advances
@@ -169,22 +170,82 @@ a function of both temperature and pressure and is expressed as a
 value in the range 0--1 (the plot limits):
 
 \begin{equation}
-x=\frac{T-T_{l}}{T_{h}-T_{l}}-\frac{\log_{10}(p/p_{l})}{\log_{10}(p_{l}-p_{h})}\label{eq:x-coordinate}
+x=\frac{T-T_{l}}{T_{h}-T_{l}}-\frac{\log_{10}(p/p_{l})}{\log_{10}(p_{l}/p_{h})}\label{eq:x-coordinate}
 \end{equation}
 
 
 where $T$ and $p$ are the respective temperature {[}$^{\circ}$C{]}
 and pressure {[}hPa{]} and \{$T_{l},\, T_{h}$\} and \{$p_{l},\, p_{h}$\}
 are the respective lower and upper limits for temperature along the
-bottom axis and for pressure. For generating the diagram, this is
-coded into a function the provide the abscissa for the plot, as follows:
+abscissa and ordinate. For generating the diagram, this is coded into
+a function that provides the abscissa for the plot, as follows:
 
-<<Xplot-function, echo=TRUE, include=TRUE>>=
-# references tBot, tTop, pBot, pTop in global environment!! caution!!
-Xplot <- function (.T, .p) { 
-  return ((.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop))
+<<XYplot-function, echo=TRUE, include=TRUE>>=
+####
+##  given temperature (deg.C) and pressure (hPa), generates the appropriate abscissa coordinate
+##  and returns that along with the original pressure is a vector suitable for plotting.
+####
+# references tBot, tTop, pBot, pTop in the global environment!! caution!!
+XYplot <- function (.T, .p) { 
+  return (data.frame(X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop), Y=.p))
 }
 @
+
+
+\subsection{The structure for the plot data and background}
+
+A convenient way to represent the values used to construct the plots
+is in terms of data.frames, with the following structure:
+\begin{enumerate}
+\item Each data.frame has pressure as the first variable and specific values,
+perhaps 1 or 2 hPa apart, that represent levels for the other variables.
+\item Other variables in the data.frame contain the temperature corresponding
+to a particular value of the variable at the corresponding pressure
+level in the data.frame. For example, in the data.frame containing
+mixing ratio, a variable MR10 may appear that contains, at each pressure
+level, the temperature at which the equilibrium mixing ratio at that
+pressure would be 10.
+\item The line can then be plotted on the skew-T diagram using the coordinates
+XYplot (DF\$MR10, DF\$P) where DF is the data.frame containing the
+results of prior calculation. 
+\item The structure for the data.frame is as follows:
+\end{enumerate}
+\noindent \begin{center}
+{\small{}}%
+\begin{tabular}{|c|c|c|c|c|}
+\hline 
+\textbf{\small{}variable} & \textbf{\small{}columns} & \textbf{\small{}number of variables} & \textbf{\small{}first value } & \textbf{\small{}last value }\tabularnewline
+\hline 
+\hline 
+{\small{}Pressure} & {\small{}P (length 1100 to 50 by 5)} & {\small{}1} &  & \tabularnewline
+\hline 
+{\small{}Theta} & {\small{}ThetaM100 to ThetaP200} & {\small{}61 (by 5)} & {\small{}$T_{0}$-100} & {\small{}$T_{0}$+200 }\tabularnewline
+\hline 
+{\small{}Mixing Ratio} & {\small{}MR0.01 to MR30} & {\small{}15 specified levels} & {\small{}0.01 / 1000} & {\small{}30 / 1000}\tabularnewline
+\hline 
+{\small{}Rossby ThetaE} & {\small{}ThetaEM60 to ThetaE50} & {\small{}23 (by 5)} & {\small{}-60+$T_{0}$} & {\small{} 50+$T_{0}$}\tabularnewline
+\hline 
+{\small{}DJ ThetaE} & {\small{}ThetaPM60 to ThetaP50} & {\small{}``} & {\small{}``} & {\small{}``}\tabularnewline
+\hline 
+{\small{}Direct-integration} & {\small{}ThetaIM60 to ThetaI50} & {\small{}``} & {\small{}``} & {\small{}``}\tabularnewline
+\hline 
+\end{tabular}
+\par\end{center}{\small \par}
+
+The pressure variable determines the number of rows for each of the
+other variables, so for example each of multiple columns for Theta
+have the same length as the pressure variable. However, there are
+300/5+1=61 Theta rows representing individual values of Theta vs pressure,
+so for example there is a row of values for Theta=$T_{0}-100$ called
+ThetaM100 representing the temperature corresponding to that value
+of Theta at each pressure level. Once this table is constructed, plots
+can be generated from data in the table without need to repeat the
+calculations, and the table can be saved as a reference for generating
+sub-plots that might span only parts of the range covered by the table. 
+
+The plot background itself is then constructed from ggplot calls to
+make it possible to save the generated background for overplotting
+with data.
 
 
 \subsection{Basic lines: isotherms, isobars, dry adiabats}
@@ -217,32 +278,39 @@ where quantities with subscript $d$ refer to dry air and $\epsilon$
 is the ratio of the molecular weight of water to that of dry air (cf.
 ProcessingAlgorithms.pdf, p. 38).
 
-<<basic-lines, echo=TRUE, include=TRUE, fig.keep='all'>>=
-pBot <- 1000
-pTop <- 100
-tTop <- 40
-tBot <- -40
-tMin <- -100
+<<basic-lines, eval=FALSE, echo=TRUE, include=TRUE>>=
+pBot <- 1100
+pRef <- 1000
+pTop <- 50
+tTop <- 50
+tBot <- -50
+tMin <- -140
 CP <- SpecificHeats ()
 RoverCP <- CP[3] / CP[1]
-pLevels <- seq (pBot, pTop, by=-50)
-tLevels <- seq (tMin, tTop, by=5)
-
-plot (c (0, 1, 1, 0, 0), c(pBot, pBot, pTop, pTop, pBot), ylim=c(1000,100), log='y', type='l')
+pLevels <- seq (pBot, pTop, by=-5)
+tLevels <- seq (tMin, tTop, by=1)
+plot (c(0.,1.), c(pTop, pBot), log='y', ylim=c(1000,100),pch=NA)
 for (p in pLevels) {
   lines (c(0., 1.), c(p, p))
 }
+
 for (t in tLevels) {
-  x1 <- Xplot (t, pBot)
+  x1 <- XYplot (t, pBot)[1]
   y1 <- pBot
   x2 <- x1 + 1
   y2 <- pTop
   lines (c(x1, x2), c(y1, y2), col='blue')  
 }
-Theta <- seq (TZERO - 100, TZERO + 200, by=10)
-for (theta in Theta) {
-  x1 <- Xplot(theta / ((1000/pLevels)^RoverCP) - TZERO, pLevels)
-  lines (x1, pLevels, col='orange')
+
+## start building data.frame
+SkewTData <- data.frame (P=pLevels)
+
+TL1 <- XYplot (tLevels, pBot)
+TL2 <- XYplot (tLevels, pTop)
+names <- "P"
+for (theta in seq (TZERO - 100, TZERO + 200, by=5)) {
+  lines (XYplot (theta / ((1000/pLevels) ^ RoverCP) - TZERO, pLevels), col='orange')
+  SkewTData[sprintf("Theta%.2f", theta)] <- theta / ((1000/pLevels) ^ RoverCP) - TZERO
 }
 @
 
@@ -275,7 +343,7 @@ be used with (\ref{eq:x-coordinate}) to find the plotted abscissa
 coordinate. This is implemented using this function in the call to
 'nleqslv':
 
-<<mr-fn, echo=-1:-3, include=TRUE>>=
+<<mr-fn, echo=TRUE, include=TRUE>>=
 # note: this omits the enhancement factor, as is conventional def. of eq. vapor pressure
 TfromRmix <- function (.T, .rMix, .P) {
   return (.rMix - MixingRatio (MurphyKoop (.T) / .P))
@@ -286,15 +354,15 @@ Using this function with calls to 'nleqslv' for a sequence of pressures
 gives a sequence of temperatures and hence a sequence of plot points
 for constructing the diagram.
 
-<<mixing-ratio-lines, echo=TRUE, include=TRUE, echo=-1>>=
-<<basic-lines>>
-rMix <- c(0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1., 3., 5, seq (5, 30, by=5)) * 0.001
+<<mixing-ratio-lines, eval=FALSE, echo=TRUE, include=TRUE>>=
+rMix <- c(0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1:3, 5, seq (10, 30, by=5)) * 0.001
 tt <- pLevels  # overwritten below, just a quick allocation
 for (rmix in rMix) {
   for (i in 1:length (pLevels)) {
     tt[i] <- nleqslv::nleqslv (10., TfromRmix, jac=NULL, rmix, pLevels[i])$x
   }
-  lines (Xplot (tt, pLevels), pLevels, col='darkgreen', lty=2)
+  lines (XYplot (tt, pLevels), col='darkgreen', lty=2)
+  SkewTData[sprintf("MR%.02f", rmix*1000)] <- tt
 }
 @
 
@@ -567,61 +635,73 @@ IntegrationStep <- function (tc, pd1, pd2, rtot, aflag) {
 <<basic-lines>>
 <<mixing-ratio-lines>>
 
-## first show conventional solution
+## first show Rossby solution
 TWB <- seq (tBot, tTop, by=5)
-ThetaE <- EquivalentPotentialTemperature (1000., TWB, MurphyKoop(TWB))
 TfromEPT <- function (.T, .thetaE, .P) {
-  e <- MurphyKoop (.T)
-  r <- MixingRatio (e / .P)
-  lhv <- 2.501e6 - 2370. * .T    # latent heat of vaporization, temp-dependent
-  expn=lhv * r / (CP[1] * (TZERO + .T))
-  return (.thetaE - (TZERO+.T)*(1000/(.P-e))^RoverCP * exp(expn))
+#  e <- MurphyKoop (.T)
+#  r <- MixingRatio (e / .P)
+#  lhv <- 2.501e6 - 2370. * .T    # latent heat of vaporization, temp-dependent
+#  expn=lhv * r / (CP[1] * (TZERO + .T))
+#  return (.thetaE - (TZERO+.T)*(1000/(.P-e))^RoverCP * exp(expn))
+  return (.thetaE - RossbyEquivalentPotentialTemperature (.P, .T))
 }
-tt <- pLevels  # shortut to define new vector
-for (thetaE in ThetaE) {
-  for (i in 1:length(pLevels)) {
-    tt[i] <- nleqslv::nleqslv (10., TfromEPT, jac=NULL, thetaE, pLevels[i])$x
-  }
-  lines (Xplot (tt, pLevels), pLevels, col='cyan')
+
+# Bolton form
+TBfromEPT <- function (.T, .ThetaB, .P) {
+  return (.ThetaB - BoltonEquivalentPotentialTemperature (.P, .T))
 }
+
 # this is solution of Davies-Jones formula; do integration later
 DJTfromEPT <- function (.T, .thetaE, .P) {
-  L0 <- 2.56313e6
-  L1 <- 1754.
-  K2 <- 1.137e6
-  TK <- .T + TZERO
-  e <- MurphyKoop (.T)
-  r <- MixingRatio (e/.P) 
-  CP <- SpecificHeats(0.)     # need dry-air value, don't need vector
-  TL = 2840./(3.5*log(TK)-log(e)-4.805)+55.
-  TDL <- TK * (1000./(.P-e))**0.2854*(TK/TL)**(0.28e-3*r)
-  THETAP <- TDL * exp (r*(L0-L1*(TL-TZERO)+K2*r)/(CP[1]*TL))
-  return (.thetaE - THETAP)
+  return (.thetaE - EquivalentPotentialTemperature (.P, .T))
 }
-for (thetaE in ThetaE) {
+tt <- pLevels  # shortut to define new vector
+for (twb in TWB) {
+  thetaR <- RossbyEquivalentPotentialTemperature (1000, twb)
   for (i in 1:length(pLevels)) {
-    tt[i] <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, 
-                               thetaE, pLevels[i])$x
+    tt[i] <- nleqslv::nleqslv (10., TfromEPT, jac=NULL, thetaR, pLevels[i])$x
   }
-  lines (Xplot (tt, pLevels), pLevels, col='red', lty=2, lwd=1.5)
+  lines (XYplot (tt, pLevels), col='cyan')
+  SkewTData[sprintf("ThetaR%.02f", twb+273.15)] <- tt
 }
-TQfromWBPT <- function (.T, .ThetaQ, .P, .rtot) {
-  e <- MurphyKoop (.T)
-  r <- MixingRatio (e / .P)
- lwc <- ifelse ((.rtot > r), 1000 * (.rtot - r) * (100 * (.P-e) / 
-                            (SpecificHeats(0)[3] * (.T+TZERO))), 0.)
-  return (.ThetaQ - WetEquivalentPotentialTemperature (.P, .T, 0, lwc))
+
+for (twb in TWB) {
+  thetaB <- BoltonEquivalentPotentialTemperature (1000, twb)
+  for (i in 1:length(pLevels)) {
+    tt[i] <- nleqslv::nleqslv (10., TBfromEPT, jac=NULL, thetaB, pLevels[i])$x
+  }
+  lines (XYplot (tt, pLevels), col='green', lwd=2, lty=4)
+  SkewTData[sprintf("ThetaB%.02f", twb+273.15)] <- tt
 }
+
+
+for (twb in TWB) {  # Davies-Jones form
+  thetaP <- EquivalentPotentialTemperature (1000, twb, MurphyKoop (twb))
+  for (i in 1:length(pLevels)) {
+    tt[i] <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pLevels[i])$x
+  }
+  lines (XYplot (tt, pLevels), col='red', lty=2, lwd=1.5)
+  SkewTData[sprintf("ThetaP%.02f", twb+273.15)] <- tt
+}
+
 
 # now add lines obtained by integration:
 CP <- SpecificHeats(0)
-for (twb in TWB[15]) {
-  p1 <- pBot - MurphyKoop (twb)
+for (twb in TWB) {
+  thetaP <- EquivalentPotentialTemperature (1000, twb)
+  ttt <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pBot)$x
+  # get appropriate starting point in dry-air pressure
+  pB <- pBot
+  while ((p1 <- pB - MurphyKoop (ttt)) < pLevels[2]) {
+    pB <- pB + 10
+    ttt <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pB)$x
+  }
   ptLevels <- pLevels
-  ptLevels[1] <- pBot
-  rtot <- MixingRatio (MurphyKoop (twb) / pBot)
-  LV <- LatentHeatApprox (twb)
-  tt[1] <- twb
+  ptLevels[1] <- pB
+  rtot <- MixingRatio (MurphyKoop (ttt) / pB)
+  LV <- LatentHeatApprox (ttt)
+  tt[1] <- ttt
+  points (XYplot (ttt, pB), pch=16, col='darkorange')
   for (i in 1:(length(pLevels)-1)) {
     tt[i+1] <- IntegrationStep (tt[i], p1, pLevels[i+1], rtot, aflag=FALSE)
     p1 <- pLevels[i+1]
@@ -630,17 +710,58 @@ for (twb in TWB[15]) {
   }
   ptLevels <- pLevels + MurphyKoop(tt)
   ptLevels[1] <- pBot
-  lines (Xplot (tt, ptLevels), ptLevels, col='brown', lty=2, lwd=3)
+  ## now interpolate to get tt interpolated to pLevels, for data.frame:
+  DI <- data.frame (ptLevels, tt)
+  tti <- tt
+  for (i in 1:(length(pLevels))) {
+    tti[i] <- LagrangeInterpolate (pLevels[i], 4, DI)
+  }
+  lines (XYplot (tt, ptLevels), col='brown', lty=2, lwd=3)
+## this needs correction for diff pdry vs p
+  SkewTData[sprintf("ThetaI%.02f", twb+273.15)] <- tti
 }
 
 # add a wet-adiabat
+
+TQfromWBPT <- function (.T, .ThetaQ, .P, .rtot) {
+  e <- MurphyKoop (.T)
+  r <- MixingRatio (e / .P)
+ lwc <- ifelse ((.rtot > r), 1000 * (.rtot - r) * (100 * (.P-e) / 
+                            (SpecificHeats(0)[3] * (.T+TZERO))), 0.)
+  return (.ThetaQ - WetEquivalentPotentialTemperature (.P, .T, 0, lwc))
+}
+
 ThetaQ <- WetEquivalentPotentialTemperature (1000, TWB[15])
 rTot <- MixingRatio (MurphyKoop (TWB[15]) / 1000)
 for (i in 1:length(pLevels)) {
   tt[i] <- nleqslv::nleqslv (10., TQfromWBPT, jac=NULL, ThetaQ, pLevels[i], rTot)$x
 }
-lines (Xplot (tt, pLevels), pLevels, col='purple', lty=1, lwd=6)
+lines (XYplot (tt, pLevels), col='purple', lty=1, lwd=3)
 
+save(SkewTData, file="SkewTData.Rdata")
+
+@
+
+
+\section{Constructing the Skew-T background via ggplot}
+
+
+\subsection{Reasons for using ggplot}
+
+The plot package 'ggplot2' is suited to generation of the background
+for a skew-T plot because it enables generation via layers and preserving
+the results in a reusable form. Layers can represent the isobars,
+isotherms, pseudo-adiabats, etc, and for subsequent use as the background
+for a sounding the result can be generated by the preserved plot definition,
+with the actual sounding over-plotted as an additional layer.
+
+
+\subsection{The basic background}
+
+<<ggplot-call-and-first-layers, echo=TRUE, include=TRUE>>=
+require (ggplot2)
+load ("./SkewTData.Rdata")
+#g <- ggplot (data=SkewTData.Rdata, 
 @
 
 \begin{center}

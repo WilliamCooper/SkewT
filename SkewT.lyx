@@ -326,6 +326,11 @@ opts_chunk$set(fig.width=6, fig.height=5, fig.pos="center", digits=4)
 
 \begin_layout Plain Layout
 
+## read a file for access to sample data
+\end_layout
+
+\begin_layout Plain Layout
+
 Directory <- DataDirectory ()
 \end_layout
 
@@ -385,8 +390,8 @@ Introduction and goal
 
 \begin_layout Standard
 The skew-T diagram (formally, the Skew-T log-p diagram) and related thermodynami
-c diagrams (tephigram, emagram, Stüve diagram) are standard tools for analysis
- of stability in the atmosphere.
+c diagrams (tephigram, emagram, pastagram, aerogram, Stüve diagram) are
+ standard tools for analysis of stability in the atmosphere.
  There are many versions of this diagram available.
  A fairly recent and very well documented source is 
 \begin_inset CommandInset href
@@ -585,6 +590,515 @@ XYplot <- function (.T, .p) {
 \end_layout
 
 \begin_layout Subsection
+The structure for the plot data and background
+\end_layout
+
+\begin_layout Standard
+A convenient way to represent the values used to construct the plots is
+ in terms of data.frames, with the following structure:
+\end_layout
+
+\begin_layout Enumerate
+Each data.frame has pressure as the first variable and specific values, perhaps
+ 1 or 2 hPa apart, that represent levels for the other variables.
+\end_layout
+
+\begin_layout Enumerate
+Other variables in the data.frame contain the temperature corresponding to
+ a particular value of the variable at the corresponding pressure level
+ in the data.frame.
+ For example, in the data.frame containing mixing ratio, a variable MR10
+ may appear that contains, at each pressure level, the temperature at which
+ the equilibrium mixing ratio at that pressure would be 10.
+\end_layout
+
+\begin_layout Enumerate
+The line can then be plotted on the skew-T diagram using the coordinates
+ XYplot (DF$MR10, DF$P) where DF is the data.frame containing the results
+ of prior calculation.
+ 
+\end_layout
+
+\begin_layout Enumerate
+The structure for the data.frame is as follows:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+
+\size small
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="5">
+<features rotate="0" tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size small
+variable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size small
+columns
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size small
+number of variables
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size small
+first value 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+\size small
+last value 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Pressure
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+P (length 1100 to 50 by 5)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Theta
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+ThetaM100 to ThetaP200
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+61 (by 5)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $T_{0}$
+\end_inset
+
+-100
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Formula $T_{0}$
+\end_inset
+
++200 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Mixing Ratio
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+MR0.01 to MR30
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+15 specified levels
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+0.01 / 1000
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+30 / 1000
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Rossby ThetaE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+ThetaEM60 to ThetaE50
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+23 (by 5)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+-60+
+\begin_inset Formula $T_{0}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+ 50+
+\begin_inset Formula $T_{0}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+DJ ThetaE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+ThetaPM60 to ThetaP50
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Quotes eld
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Quotes eld
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Quotes eld
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+Direct-integration
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+ThetaIM60 to ThetaI50
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Quotes eld
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Quotes eld
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\size small
+\begin_inset Quotes eld
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The pressure variable determines the number of rows for each of the other
+ variables, so for example each of multiple columns for Theta have the same
+ length as the pressure variable.
+ However, there are 300/5+1=61 Theta rows representing individual values
+ of Theta vs pressure, so for example there is a row of values for Theta=
+\begin_inset Formula $T_{0}-100$
+\end_inset
+
+ called ThetaM100 representing the temperature corresponding to that value
+ of Theta at each pressure level.
+ Once this table is constructed, plots can be generated from data in the
+ table without need to repeat the calculations, and the table can be saved
+ as a reference for generating sub-plots that might span only parts of the
+ range covered by the table.
+ 
+\end_layout
+
+\begin_layout Standard
+The plot background itself is then constructed from ggplot calls to make
+ it possible to save the generated background for overplotting with data.
+\end_layout
+
+\begin_layout Subsection
 Basic lines: isotherms, isobars, dry adiabats
 \end_layout
 
@@ -692,32 +1206,37 @@ status open
 
 \begin_layout Plain Layout
 
-<<basic-lines, echo=TRUE, include=TRUE, fig.keep='all'>>=
+<<basic-lines, eval=FALSE, echo=TRUE, include=TRUE>>=
 \end_layout
 
 \begin_layout Plain Layout
 
-pBot <- 1000
+pBot <- 1100
 \end_layout
 
 \begin_layout Plain Layout
 
-pTop <- 100
+pRef <- 1000
 \end_layout
 
 \begin_layout Plain Layout
 
-tTop <- 40
+pTop <- 50
 \end_layout
 
 \begin_layout Plain Layout
 
-tBot <- -40
+tTop <- 50
 \end_layout
 
 \begin_layout Plain Layout
 
-tMin <- -100
+tBot <- -50
+\end_layout
+
+\begin_layout Plain Layout
+
+tMin <- -140
 \end_layout
 
 \begin_layout Plain Layout
@@ -732,22 +1251,17 @@ RoverCP <- CP[3] / CP[1]
 
 \begin_layout Plain Layout
 
-pLevels <- seq (pBot, pTop, by=-50)
+pLevels <- seq (pBot, pTop, by=-5)
 \end_layout
 
 \begin_layout Plain Layout
 
-tLevels <- seq (tMin, tTop, by=5)
+tLevels <- seq (tMin, tTop, by=1)
 \end_layout
 
 \begin_layout Plain Layout
 
-\end_layout
-
-\begin_layout Plain Layout
-
-plot (c (0, 1, 1, 0, 0), c(pBot, pBot, pTop, pTop, pBot), ylim=c(1000,100),
- log='y', type='l')
+plot (c(0.,1.), c(pTop, pBot), log='y', ylim=c(1000,100),pch=NA)
 \end_layout
 
 \begin_layout Plain Layout
@@ -806,18 +1320,52 @@ for (t in tLevels) {
 
 \begin_layout Plain Layout
 
-Theta <- seq (TZERO - 100, TZERO + 200, by=10)
 \end_layout
 
 \begin_layout Plain Layout
 
-for (theta in seq (TZERO - 100, TZERO + 200, by=10)) {
+## start building data.frame
+\end_layout
+
+\begin_layout Plain Layout
+
+SkewTData <- data.frame (P=pLevels)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+TL1 <- XYplot (tLevels, pBot)
+\end_layout
+
+\begin_layout Plain Layout
+
+TL2 <- XYplot (tLevels, pTop)
+\end_layout
+
+\begin_layout Plain Layout
+
+names <- "P"
+\end_layout
+
+\begin_layout Plain Layout
+
+for (theta in seq (TZERO - 100, TZERO + 200, by=5)) {
 \end_layout
 
 \begin_layout Plain Layout
 
   lines (XYplot (theta / ((1000/pLevels) ^ RoverCP) - TZERO, pLevels), col='oran
 ge')
+\end_layout
+
+\begin_layout Plain Layout
+
+  SkewTData[sprintf("Theta%.2f", theta)] <- theta / ((1000/pLevels) ^ RoverCP)
+ - TZERO
 \end_layout
 
 \begin_layout Plain Layout
@@ -929,7 +1477,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<mr-fn, echo=-1:-3, include=TRUE>>=
+<<mr-fn, echo=TRUE, include=TRUE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -976,17 +1524,12 @@ status open
 
 \begin_layout Plain Layout
 
-<<mixing-ratio-lines, echo=TRUE, include=TRUE, echo=-1>>=
+<<mixing-ratio-lines, eval=FALSE, echo=TRUE, include=TRUE>>=
 \end_layout
 
 \begin_layout Plain Layout
 
-<<basic-lines>>
-\end_layout
-
-\begin_layout Plain Layout
-
-rMix <- c(0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1., 3., 5, seq (5, 30, by=5)) * 0.001
+rMix <- c(0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1:3, 5, seq (10, 30, by=5)) * 0.001
 \end_layout
 
 \begin_layout Plain Layout
@@ -1017,6 +1560,11 @@ for (rmix in rMix) {
 \begin_layout Plain Layout
 
   lines (XYplot (tt, pLevels), col='darkgreen', lty=2)
+\end_layout
+
+\begin_layout Plain Layout
+
+  SkewTData[sprintf("MR%.02f", rmix*1000)] <- tt
 \end_layout
 
 \begin_layout Plain Layout
@@ -2114,7 +2662,7 @@ status open
 
 \begin_layout Plain Layout
 
-## first show conventional solution
+## first show Rossby solution
 \end_layout
 
 \begin_layout Plain Layout
@@ -2124,38 +2672,62 @@ TWB <- seq (tBot, tTop, by=5)
 
 \begin_layout Plain Layout
 
-ThetaE <- EquivalentPotentialTemperature (1000., TWB, MurphyKoop(TWB))
-\end_layout
-
-\begin_layout Plain Layout
-
 TfromEPT <- function (.T, .thetaE, .P) {
 \end_layout
 
 \begin_layout Plain Layout
 
-  e <- MurphyKoop (.T)
+#  e <- MurphyKoop (.T)
 \end_layout
 
 \begin_layout Plain Layout
 
-  r <- MixingRatio (e / .P)
+#  r <- MixingRatio (e / .P)
 \end_layout
 
 \begin_layout Plain Layout
 
-  lhv <- 2.501e6 - 2370.
+#  lhv <- 2.501e6 - 2370.
  * .T    # latent heat of vaporization, temp-dependent
 \end_layout
 
 \begin_layout Plain Layout
 
-  expn=lhv * r / (CP[1] * (TZERO + .T))
+#  expn=lhv * r / (CP[1] * (TZERO + .T))
 \end_layout
 
 \begin_layout Plain Layout
 
-  return (.thetaE - (TZERO+.T)*(1000/(.P-e))^RoverCP * exp(expn))
+#  return (.thetaE - (TZERO+.T)*(1000/(.P-e))^RoverCP * exp(expn))
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (.thetaE - RossbyEquivalentPotentialTemperature (.P, .T))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Bolton form
+\end_layout
+
+\begin_layout Plain Layout
+
+TBfromEPT <- function (.T, .ThetaB, .P) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (.ThetaB - BoltonEquivalentPotentialTemperature (.P, .T))
 \end_layout
 
 \begin_layout Plain Layout
@@ -2165,37 +2737,6 @@ TfromEPT <- function (.T, .thetaE, .P) {
 
 \begin_layout Plain Layout
 
-tt <- pLevels  # shortut to define new vector
-\end_layout
-
-\begin_layout Plain Layout
-
-for (thetaE in ThetaE) {
-\end_layout
-
-\begin_layout Plain Layout
-
-  for (i in 1:length(pLevels)) {
-\end_layout
-
-\begin_layout Plain Layout
-
-    tt[i] <- nleqslv::nleqslv (10., TfromEPT, jac=NULL, thetaE, pLevels[i])$x
-\end_layout
-
-\begin_layout Plain Layout
-
-  }
-\end_layout
-
-\begin_layout Plain Layout
-
-  lines (XYplot (tt, pLevels), col='cyan')
-\end_layout
-
-\begin_layout Plain Layout
-
-}
 \end_layout
 
 \begin_layout Plain Layout
@@ -2210,57 +2751,7 @@ DJTfromEPT <- function (.T, .thetaE, .P) {
 
 \begin_layout Plain Layout
 
-  L0 <- 2.56313e6
-\end_layout
-
-\begin_layout Plain Layout
-
-  L1 <- 1754.
-\end_layout
-
-\begin_layout Plain Layout
-
-  K2 <- 1.137e6
-\end_layout
-
-\begin_layout Plain Layout
-
-  TK <- .T + TZERO
-\end_layout
-
-\begin_layout Plain Layout
-
-  e <- MurphyKoop (.T)
-\end_layout
-
-\begin_layout Plain Layout
-
-  r <- MixingRatio (e/.P) 
-\end_layout
-
-\begin_layout Plain Layout
-
-  CP <- SpecificHeats(0.)     # need dry-air value, don't need vector
-\end_layout
-
-\begin_layout Plain Layout
-
-  TL = 2840./(3.5*log(TK)-log(e)-4.805)+55.
-\end_layout
-
-\begin_layout Plain Layout
-
-  TDL <- TK * (1000./(.P-e))**0.2854*(TK/TL)**(0.28e-3*r)
-\end_layout
-
-\begin_layout Plain Layout
-
-  THETAP <- TDL * exp (r*(L0-L1*(TL-TZERO)+K2*r)/(CP[1]*TL))
-\end_layout
-
-\begin_layout Plain Layout
-
-  return (.thetaE - THETAP)
+  return (.thetaE - EquivalentPotentialTemperature (.P, .T))
 \end_layout
 
 \begin_layout Plain Layout
@@ -2270,7 +2761,17 @@ DJTfromEPT <- function (.T, .thetaE, .P) {
 
 \begin_layout Plain Layout
 
-for (thetaE in ThetaE) {
+tt <- pLevels  # shortut to define new vector
+\end_layout
+
+\begin_layout Plain Layout
+
+for (twb in TWB) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  thetaR <- RossbyEquivalentPotentialTemperature (1000, twb)
 \end_layout
 
 \begin_layout Plain Layout
@@ -2280,7 +2781,99 @@ for (thetaE in ThetaE) {
 
 \begin_layout Plain Layout
 
-    tt[i] <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaE, pLevels[i])$x
+    tt[i] <- nleqslv::nleqslv (10., TfromEPT, jac=NULL, thetaR, pLevels[i])$x
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+  lines (XYplot (tt, pLevels), col='cyan')
+\end_layout
+
+\begin_layout Plain Layout
+
+  SkewTData[sprintf("ThetaR%.02f", twb+273.15)] <- tt
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+for (twb in TWB) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  thetaB <- BoltonEquivalentPotentialTemperature (1000, twb)
+\end_layout
+
+\begin_layout Plain Layout
+
+  for (i in 1:length(pLevels)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    tt[i] <- nleqslv::nleqslv (10., TBfromEPT, jac=NULL, thetaB, pLevels[i])$x
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+  lines (XYplot (tt, pLevels), col='green', lwd=2, lty=4)
+\end_layout
+
+\begin_layout Plain Layout
+
+  SkewTData[sprintf("ThetaB%.02f", twb+273.15)] <- tt
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+for (twb in TWB) {  # Davies-Jones form
+\end_layout
+
+\begin_layout Plain Layout
+
+  thetaP <- EquivalentPotentialTemperature (1000, twb, MurphyKoop (twb))
+\end_layout
+
+\begin_layout Plain Layout
+
+  for (i in 1:length(pLevels)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    tt[i] <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pLevels[i])$x
 \end_layout
 
 \begin_layout Plain Layout
@@ -2295,42 +2888,16 @@ for (thetaE in ThetaE) {
 
 \begin_layout Plain Layout
 
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-TQfromWBPT <- function (.T, .ThetaQ, .P, .rtot) {
-\end_layout
-
-\begin_layout Plain Layout
-
-  e <- MurphyKoop (.T)
-\end_layout
-
-\begin_layout Plain Layout
-
-  r <- MixingRatio (e / .P)
-\end_layout
-
-\begin_layout Plain Layout
-
- lwc <- ifelse ((.rtot > r), 1000 * (.rtot - r) * (100 * (.P-e) / 
-\end_layout
-
-\begin_layout Plain Layout
-
-                            (SpecificHeats(0)[3] * (.T+TZERO))), 0.)
-\end_layout
-
-\begin_layout Plain Layout
-
-  return (.ThetaQ - WetEquivalentPotentialTemperature (.P, .T, 0, lwc))
+  SkewTData[sprintf("ThetaP%.02f", twb+273.15)] <- tt
 \end_layout
 
 \begin_layout Plain Layout
 
 }
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -2349,12 +2916,47 @@ CP <- SpecificHeats(0)
 
 \begin_layout Plain Layout
 
-for (twb in TWB[15]) {
+for (twb in TWB) {
 \end_layout
 
 \begin_layout Plain Layout
 
-  p1 <- pBot - MurphyKoop (twb)
+  thetaP <- EquivalentPotentialTemperature (1000, twb)
+\end_layout
+
+\begin_layout Plain Layout
+
+  ttt <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pBot)$x
+\end_layout
+
+\begin_layout Plain Layout
+
+  # get appropriate starting point in dry-air pressure
+\end_layout
+
+\begin_layout Plain Layout
+
+  pB <- pBot
+\end_layout
+
+\begin_layout Plain Layout
+
+  while ((p1 <- pB - MurphyKoop (ttt)) < pLevels[2]) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    pB <- pB + 10
+\end_layout
+
+\begin_layout Plain Layout
+
+    ttt <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pB)$x
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
 \end_layout
 
 \begin_layout Plain Layout
@@ -2364,22 +2966,27 @@ for (twb in TWB[15]) {
 
 \begin_layout Plain Layout
 
-  ptLevels[1] <- pBot
+  ptLevels[1] <- pB
 \end_layout
 
 \begin_layout Plain Layout
 
-  rtot <- MixingRatio (MurphyKoop (twb) / pBot)
+  rtot <- MixingRatio (MurphyKoop (ttt) / pB)
 \end_layout
 
 \begin_layout Plain Layout
 
-  LV <- LatentHeatApprox (twb)
+  LV <- LatentHeatApprox (ttt)
 \end_layout
 
 \begin_layout Plain Layout
 
-  tt[1] <- twb
+  tt[1] <- ttt
+\end_layout
+
+\begin_layout Plain Layout
+
+  points (XYplot (ttt, pB), pch=16, col='darkorange')
 \end_layout
 
 \begin_layout Plain Layout
@@ -2425,7 +3032,47 @@ t[i])
 
 \begin_layout Plain Layout
 
+  ## now interpolate to get tt interpolated to pLevels, for data.frame:
+\end_layout
+
+\begin_layout Plain Layout
+
+  DI <- data.frame (ptLevels, tt)
+\end_layout
+
+\begin_layout Plain Layout
+
+  tti <- tt
+\end_layout
+
+\begin_layout Plain Layout
+
+  for (i in 1:(length(pLevels))) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    tti[i] <- LagrangeInterpolate (pLevels[i], 4, DI)
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
   lines (XYplot (tt, ptLevels), col='brown', lty=2, lwd=3)
+\end_layout
+
+\begin_layout Plain Layout
+
+## this needs correction for diff pdry vs p
+\end_layout
+
+\begin_layout Plain Layout
+
+  SkewTData[sprintf("ThetaI%.02f", twb+273.15)] <- tti
 \end_layout
 
 \begin_layout Plain Layout
@@ -2440,6 +3087,49 @@ t[i])
 \begin_layout Plain Layout
 
 # add a wet-adiabat
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+TQfromWBPT <- function (.T, .ThetaQ, .P, .rtot) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  e <- MurphyKoop (.T)
+\end_layout
+
+\begin_layout Plain Layout
+
+  r <- MixingRatio (e / .P)
+\end_layout
+
+\begin_layout Plain Layout
+
+ lwc <- ifelse ((.rtot > r), 1000 * (.rtot - r) * (100 * (.P-e) / 
+\end_layout
+
+\begin_layout Plain Layout
+
+                            (SpecificHeats(0)[3] * (.T+TZERO))), 0.)
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (.ThetaQ - WetEquivalentPotentialTemperature (.P, .T, 0, lwc))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -2470,11 +3160,76 @@ for (i in 1:length(pLevels)) {
 
 \begin_layout Plain Layout
 
-lines (XYplot (tt, pLevels), col='purple', lty=1, lwd=6)
+lines (XYplot (tt, pLevels), col='purple', lty=1, lwd=3)
 \end_layout
 
 \begin_layout Plain Layout
 
+\end_layout
+
+\begin_layout Plain Layout
+
+save(SkewTData, file="SkewTData.Rdata")
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Constructing the Skew-T background via ggplot
+\end_layout
+
+\begin_layout Subsection
+Reasons for using ggplot
+\end_layout
+
+\begin_layout Standard
+The plot package 'ggplot2' is suited to generation of the background for
+ a skew-T plot because it enables generation via layers and preserving the
+ results in a reusable form.
+ Layers can represent the isobars, isotherms, pseudo-adiabats, etc, and
+ for subsequent use as the background for a sounding the result can be generated
+ by the preserved plot definition, with the actual sounding over-plotted
+ as an additional layer.
+\end_layout
+
+\begin_layout Subsection
+The basic background
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<ggplot-call-and-first-layers, echo=TRUE, include=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+require (ggplot2)
+\end_layout
+
+\begin_layout Plain Layout
+
+load ("./SkewTData.Rdata")
+\end_layout
+
+\begin_layout Plain Layout
+
+#g <- ggplot (data=SkewTData.Rdata, 
 \end_layout
 
 \begin_layout Plain Layout
