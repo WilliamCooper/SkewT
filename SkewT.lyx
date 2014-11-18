@@ -286,12 +286,7 @@ require(Ranadu, quietly = TRUE, warn.conflicts=FALSE)
 
 \begin_layout Plain Layout
 
-require(ggplot2)
-\end_layout
-
-\begin_layout Plain Layout
-
-require(grid)
+require (nleqslv, quietly = TRUE, warn.conflicts=FALSE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -301,63 +296,17 @@ library(knitr)
 
 \begin_layout Plain Layout
 
-require(ggthemes)
+opts_chunk$set (echo=FALSE, include=FALSE, fig.lp="fig:", size='footnotesize')
 \end_layout
 
 \begin_layout Plain Layout
 
-require(vioplot)
+opts_chunk$set (fig.width=6, fig.height=6, fig.pos="center", digits=4)
 \end_layout
 
 \begin_layout Plain Layout
 
-require(plyr)
-\end_layout
-
-\begin_layout Plain Layout
-
-opts_chunk$set(echo=FALSE, include=FALSE, fig.lp="fig:", size='footnotesize')
-\end_layout
-
-\begin_layout Plain Layout
-
-opts_chunk$set(fig.width=6, fig.height=5, fig.pos="center", digits=4)
-\end_layout
-
-\begin_layout Plain Layout
-
-## read a file for access to sample data
-\end_layout
-
-\begin_layout Plain Layout
-
-Directory <- DataDirectory ()
-\end_layout
-
-\begin_layout Plain Layout
-
-Flight <- "rf16" 				# XXX change this
-\end_layout
-
-\begin_layout Plain Layout
-
-Project = "DEEPWAVE"			 # XXX change this
-\end_layout
-
-\begin_layout Plain Layout
-
-fname = sprintf("%s%s/%s%s.nc", Directory,Project,Project,Flight)
-\end_layout
-
-\begin_layout Plain Layout
-
-Data <- getNetCDF (fname, standardVariables(c("THETAP")))		#XXX set variables
- needed here
-\end_layout
-
-\begin_layout Plain Layout
-
-#SaveRData <- sprintf("%s.Rdata.gz", thisFileName)
+opts_chunk$set (warnings=FALSE, strip.white=TRUE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -367,7 +316,7 @@ EPS <- StandardConstant ("MWW") / StandardConstant ("MWD")
 
 \begin_layout Plain Layout
 
-TZERO <- StandardConstant("Tzero")
+TZERO <- StandardConstant ("Tzero")
 \end_layout
 
 \begin_layout Plain Layout
@@ -389,7 +338,7 @@ Introduction and goal
 \end_layout
 
 \begin_layout Standard
-The skew-T diagram (formally, the Skew-T log-p diagram) and related thermodynami
+The skew-T diagram (formally, the Skew-T log-P diagram) and related thermodynami
 c diagrams (tephigram, emagram, pastagram, aerogram, Stüve diagram) are
  standard tools for analysis of stability in the atmosphere.
  There are many versions of this diagram available.
@@ -460,10 +409,9 @@ Soc.
  Furthermore, any definition of pseudo-adiabatic equivalent potential temperatur
 e will likely involve approximations because the specific heat and latent
  heat of vaporization of water vary with temperature, and the former has
- not been included even in the Davies-Jones formula, which did not use the
- Murphy-Koop representation of equilibrium water vapor pressure.
+ not been included even in the Davies-Jones formula.
  For that reason, the goal here is to construct new diagrams based on those
- two advances and compare the results to standard diagrams.
+ two advances.
  For the pseudo-adiabatics, the calculation will be based on direct integration
  of the differential equation representing constant entropy, as discussed
  in a 2011 memo referenced from the document ProcessingAlgorithms.pdf.
@@ -570,8 +518,8 @@ XYplot <- function (.T, .p) {
 
 \begin_layout Plain Layout
 
-  return (data.frame(X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop),
- Y=.p))
+  return (data.frame (X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop)
+, Y=.p))
 \end_layout
 
 \begin_layout Plain Layout
@@ -1178,7 +1126,7 @@ K or more for moist air.
 
 \begin_inset Formula 
 \[
-\frac{R}{c_{p}}=\frac{R_{d}}{c_{pd}(1+\frac{1}{5}\frac{e}{p})}^{\prime}
+\frac{R}{c_{p}}=\frac{R_{d}}{c_{pd}(1+\frac{1}{5}\frac{e}{p})}
 \]
 
 \end_inset
@@ -1191,12 +1139,15 @@ where quantities with subscript
 \begin_inset Formula $d$
 \end_inset
 
- refer to dry air and 
-\begin_inset Formula $\epsilon$
+ refer to dry air (cf.
+\begin_inset CommandInset href
+LatexCommand href
+name " ProcessingAlgorithms.pdf"
+target "https://drive.google.com/file/d/0B1kIUH45ca5Ab2Z6cld1M1cydjA/view?usp=sharing"
+
 \end_inset
 
- is the ratio of the molecular weight of water to that of dry air (cf.
- ProcessingAlgorithms.pdf, p.
+, p.
  38).
 \end_layout
 
@@ -1246,7 +1197,7 @@ CP <- SpecificHeats ()
 
 \begin_layout Plain Layout
 
-RoverCP <- CP[3] / CP[1]
+RbyCP <- CP[3] / CP[1]
 \end_layout
 
 \begin_layout Plain Layout
@@ -1256,12 +1207,12 @@ pLevels <- seq (pBot, pTop, by=-5)
 
 \begin_layout Plain Layout
 
-tLevels <- seq (tMin, tTop, by=1)
+tLevels <- seq (tMin, tTop, by=5)
 \end_layout
 
 \begin_layout Plain Layout
 
-plot (c(0.,1.), c(pTop, pBot), log='y', ylim=c(1000,100),pch=NA)
+plot (c(0., 1.), c(pTop, pBot), log='y', ylim=c(1000, 100),pch=NA)
 \end_layout
 
 \begin_layout Plain Layout
@@ -1324,7 +1275,7 @@ for (t in tLevels) {
 
 \begin_layout Plain Layout
 
-## start building data.frame
+## start building data.frame to contain arrays holding lines to be plotted
 \end_layout
 
 \begin_layout Plain Layout
@@ -1334,37 +1285,18 @@ SkewTData <- data.frame (P=pLevels)
 
 \begin_layout Plain Layout
 
-\end_layout
-
-\begin_layout Plain Layout
-
-TL1 <- XYplot (tLevels, pBot)
-\end_layout
-
-\begin_layout Plain Layout
-
-TL2 <- XYplot (tLevels, pTop)
-\end_layout
-
-\begin_layout Plain Layout
-
-names <- "P"
-\end_layout
-
-\begin_layout Plain Layout
-
 for (theta in seq (TZERO - 100, TZERO + 200, by=5)) {
 \end_layout
 
 \begin_layout Plain Layout
 
-  lines (XYplot (theta / ((1000/pLevels) ^ RoverCP) - TZERO, pLevels), col='oran
-ge')
+  lines (XYplot (theta / ((1000/pLevels) ^ RbyCP) - TZERO, pLevels), col='orange
+')
 \end_layout
 
 \begin_layout Plain Layout
 
-  SkewTData[sprintf("Theta%.2f", theta)] <- theta / ((1000/pLevels) ^ RoverCP)
+  SkewTData[sprintf("Theta%.2f", theta)] <- theta / ((1000/pLevels) ^ RbyCP)
  - TZERO
 \end_layout
 
@@ -1549,7 +1481,7 @@ for (rmix in rMix) {
 
 \begin_layout Plain Layout
 
-    tt[i] <- nleqslv::nleqslv (10., TfromRmix, jac=NULL, rmix, pLevels[i])$x
+    tt[i] <- nleqslv (10., TfromRmix, jac=NULL, rmix, pLevels[i])$x
 \end_layout
 
 \begin_layout Plain Layout
@@ -2316,7 +2248,7 @@ LCL <- function (.RH, .T, .p) {  # .RH in a fraction (not %), .T in deg.C, .p in
 
 \begin_layout Plain Layout
 
-  pLCL <- nleqslv::nleqslv (.p, LCLfn, jac=NULL, RbyCP, thetam, mr)
+  pLCL <- nleqslv (.p, LCLfn, jac=NULL, RbyCP, thetam, mr)
 \end_layout
 
 \begin_layout Plain Layout
@@ -2356,7 +2288,7 @@ deriv1 <- function (.T, .LV) { # evaluate last partial deriv.
 
 \begin_layout Plain Layout
 
-  LVp <- .LV + (CPWaterVapor(tc)-SpecificHeatLiquidWater(tc)) * delt
+  LVp <- .LV + (CPWaterVapor (tc) - SpecificHeatLiquidWater (tc)) * delt
 \end_layout
 
 \begin_layout Plain Layout
@@ -2376,7 +2308,7 @@ deriv1 <- function (.T, .LV) { # evaluate last partial deriv.
 
 \begin_layout Plain Layout
 
-  LVm <- .LV - (CPWaterVapor(tc)-SpecificHeatLiquidWater(tc)) * delt
+  LVm <- .LV - (CPWaterVapor (tc) - SpecificHeatLiquidWater (tc)) * delt
 \end_layout
 
 \begin_layout Plain Layout
@@ -2450,12 +2382,12 @@ dTdpdF <- function (.T, .pd, .LV, .rtot=NA, .aflag=FALSE) {
 
 \begin_layout Plain Layout
 
-  cp_x <- CP[1] + rx * SpecificHeatLiquidWater(.T)
+  cp_x <- CP[1] + rx * SpecificHeatLiquidWater (.T)
 \end_layout
 
 \begin_layout Plain Layout
 
-  A <- ((tk*SpecificHeats(0)[3]+.LV*MixingRatio(e/p))/.pd) /
+  A <- ((tk * SpecificHeats(0)[3] + .LV * MixingRatio (e/p)) / .pd) /
 \end_layout
 
 \begin_layout Plain Layout
@@ -2514,7 +2446,7 @@ IntegrationStep <- function (tc, pd1, pd2, rtot, aflag) {
 
 \begin_layout Plain Layout
 
-  nsteps <- 2
+  nsteps <- 5
 \end_layout
 
 \begin_layout Plain Layout
@@ -2643,7 +2575,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<THETA-P, echo=TRUE, include=TRUE, echo=-2, fig.height=6>>=
+<<THETA-P, echo=TRUE, include=TRUE, echo=-2, fig.height=6, warning=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -2698,7 +2630,7 @@ TfromEPT <- function (.T, .thetaE, .P) {
 
 \begin_layout Plain Layout
 
-#  return (.thetaE - (TZERO+.T)*(1000/(.P-e))^RoverCP * exp(expn))
+#  return (.thetaE - (TZERO+.T)*(1000/(.P-e))^RbyCP * exp(expn))
 \end_layout
 
 \begin_layout Plain Layout
@@ -2781,7 +2713,7 @@ for (twb in TWB) {
 
 \begin_layout Plain Layout
 
-    tt[i] <- nleqslv::nleqslv (10., TfromEPT, jac=NULL, thetaR, pLevels[i])$x
+    tt[i] <- nleqslv (10., TfromEPT, jac=NULL, thetaR, pLevels[i])$x
 \end_layout
 
 \begin_layout Plain Layout
@@ -2796,7 +2728,7 @@ for (twb in TWB) {
 
 \begin_layout Plain Layout
 
-  SkewTData[sprintf("ThetaR%.02f", twb+273.15)] <- tt
+  SkewTData[sprintf("ThetaR%.02f", twb+TZERO)] <- tt
 \end_layout
 
 \begin_layout Plain Layout
@@ -2825,7 +2757,7 @@ for (twb in TWB) {
 
 \begin_layout Plain Layout
 
-    tt[i] <- nleqslv::nleqslv (10., TBfromEPT, jac=NULL, thetaB, pLevels[i])$x
+    tt[i] <- nleqslv (10., TBfromEPT, jac=NULL, thetaB, pLevels[i])$x
 \end_layout
 
 \begin_layout Plain Layout
@@ -2840,7 +2772,7 @@ for (twb in TWB) {
 
 \begin_layout Plain Layout
 
-  SkewTData[sprintf("ThetaB%.02f", twb+273.15)] <- tt
+  SkewTData[sprintf("ThetaB%.02f", twb+TZERO)] <- tt
 \end_layout
 
 \begin_layout Plain Layout
@@ -2873,7 +2805,7 @@ for (twb in TWB) {  # Davies-Jones form
 
 \begin_layout Plain Layout
 
-    tt[i] <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pLevels[i])$x
+    tt[i] <- nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pLevels[i])$x
 \end_layout
 
 \begin_layout Plain Layout
@@ -2888,7 +2820,7 @@ for (twb in TWB) {  # Davies-Jones form
 
 \begin_layout Plain Layout
 
-  SkewTData[sprintf("ThetaP%.02f", twb+273.15)] <- tt
+  SkewTData[sprintf("ThetaP%.02f", twb+TZERO)] <- tt
 \end_layout
 
 \begin_layout Plain Layout
@@ -2926,7 +2858,7 @@ for (twb in TWB) {
 
 \begin_layout Plain Layout
 
-  ttt <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pBot)$x
+  ttt <- nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pBot)$x
 \end_layout
 
 \begin_layout Plain Layout
@@ -2951,7 +2883,7 @@ for (twb in TWB) {
 
 \begin_layout Plain Layout
 
-    ttt <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pB)$x
+    ttt <- nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pB)$x
 \end_layout
 
 \begin_layout Plain Layout
@@ -3072,7 +3004,7 @@ t[i])
 
 \begin_layout Plain Layout
 
-  SkewTData[sprintf("ThetaI%.02f", twb+273.15)] <- tti
+  SkewTData[sprintf("ThetaI%.02f", twb+TZERO)] <- tti
 \end_layout
 
 \begin_layout Plain Layout
@@ -3144,13 +3076,12 @@ rTot <- MixingRatio (MurphyKoop (TWB[15]) / 1000)
 
 \begin_layout Plain Layout
 
-for (i in 1:length(pLevels)) {
+for (i in 1:length (pLevels)) {
 \end_layout
 
 \begin_layout Plain Layout
 
-  tt[i] <- nleqslv::nleqslv (10., TQfromWBPT, jac=NULL, ThetaQ, pLevels[i],
- rTot)$x
+  tt[i] <- nleqslv (10., TQfromWBPT, jac=NULL, ThetaQ, pLevels[i], rTot)$x
 \end_layout
 
 \begin_layout Plain Layout
@@ -3195,17 +3126,202 @@ Reasons for using ggplot
 \end_layout
 
 \begin_layout Standard
-The plot package 'ggplot2' is suited to generation of the background for
- a skew-T plot because it enables generation via layers and preserving the
- results in a reusable form.
+For the plot generated in the preceding sections, the 
+\begin_inset Quotes eld
+\end_inset
+
+base
+\begin_inset Quotes erd
+\end_inset
+
+ graphics of R have been used.
+ The plot package 'ggplot2' is better suited to generation of the background
+ for a skew-T plot because it enables generation via layers and preserving
+ the results in a reusable form.
  Layers can represent the isobars, isotherms, pseudo-adiabats, etc, and
  for subsequent use as the background for a sounding the result can be generated
  by the preserved plot definition, with the actual sounding over-plotted
  as an additional layer.
+ That is the approach taken in the remainder of this document.
 \end_layout
 
 \begin_layout Subsection
 The basic background
+\end_layout
+
+\begin_layout Standard
+Here are some variables that determine the range covered by the plot.
+ These can be changed to give plots covering different areas, although some
+ work is still needed to get that to work for other than the standard limits
+ here:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<adjustable-parameters, echo=TRUE, include=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+####
+\end_layout
+
+\begin_layout Plain Layout
+
+##   Here are characteristics for the plot, which can be changed as desired.
+\end_layout
+
+\begin_layout Plain Layout
+
+##   Some other characteristics, like definition of which mixing-ratio lines
+\end_layout
+
+\begin_layout Plain Layout
+
+##   to plot, have already been determined when the data file was 
+\end_layout
+
+\begin_layout Plain Layout
+
+##   generated above; see, for example, MR[] there.
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+##   background color for plot area
+\end_layout
+
+\begin_layout Plain Layout
+
+bColor <- "gray95"
+\end_layout
+
+\begin_layout Plain Layout
+
+bColor <- "lightyellow"
+\end_layout
+
+\begin_layout Plain Layout
+
+bColor <- "lemonchiffon1"
+\end_layout
+
+\begin_layout Plain Layout
+
+bColor <- "cornsilk"
+\end_layout
+
+\begin_layout Plain Layout
+
+bColor <- "aliceblue"
+\end_layout
+
+\begin_layout Plain Layout
+
+bColor <- "ivory"
+\end_layout
+
+\begin_layout Plain Layout
+
+##   color for pressure lines and plot border, and thickness of lines
+\end_layout
+
+\begin_layout Plain Layout
+
+pColor <- 'darkblue'        # pressure lines
+\end_layout
+
+\begin_layout Plain Layout
+
+plwd <- 0.4                 # line width for pressure lines 
+\end_layout
+
+\begin_layout Plain Layout
+
+## color for isotherms
+\end_layout
+
+\begin_layout Plain Layout
+
+tColor <- 'darkblue'        # temperature lines
+\end_layout
+
+\begin_layout Plain Layout
+
+tlwd=0.4                    # line width for temperature lines
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+pBot <- 1000                # range in pressure and temperature for the
+ plot
+\end_layout
+
+\begin_layout Plain Layout
+
+pTop <- 100
+\end_layout
+
+\begin_layout Plain Layout
+
+tBot <- -40
+\end_layout
+
+\begin_layout Plain Layout
+
+tTop <- 40
+\end_layout
+
+\begin_layout Plain Layout
+
+tMin <- -140                # needed to cover isotherms in top-left of plot
+\end_layout
+
+\begin_layout Plain Layout
+
+pLevels <- seq (pBot, pTop, by=-50)    # lines to plot for pressure
+\end_layout
+
+\begin_layout Plain Layout
+
+tLevels <- seq (tMin, tTop, by=5)      # lines to plot for temperature
+\end_layout
+
+\begin_layout Plain Layout
+
+####
+\end_layout
+
+\begin_layout Plain Layout
+
+##   end of changeable plot characteristics
+\end_layout
+
+\begin_layout Plain Layout
+
+####
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3224,12 +3340,1143 @@ require (ggplot2)
 
 \begin_layout Plain Layout
 
+require (ggthemes)
+\end_layout
+
+\begin_layout Plain Layout
+
+require (grid)
+\end_layout
+
+\begin_layout Plain Layout
+
+library (scales)
+\end_layout
+
+\begin_layout Plain Layout
+
+## the following is already in memory if this program is run from the beginning,
+ but
+\end_layout
+
+\begin_layout Plain Layout
+
+## some of the items here including the following "load" of the generated
+ data are
+\end_layout
+
+\begin_layout Plain Layout
+
+## models for how the generated information can be used.
+ Note that the following datafile
+\end_layout
+
+\begin_layout Plain Layout
+
+## contains some variables that are not used below but are present because
+ they were
+\end_layout
+
+\begin_layout Plain Layout
+
+## generated for comparison to the variables actually used.
+\end_layout
+
+\begin_layout Plain Layout
+
 load ("./SkewTData.Rdata")
 \end_layout
 
 \begin_layout Plain Layout
 
-#g <- ggplot (data=SkewTData.Rdata, 
+## read a file for access to sample data
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For convenience in determining the correspondence between {T, P} coordinates
+ and plot coordinates, the basic transformation function used above is redefined
+ here, with the same name as before.
+ The reason is that there were problems defining a plot with ggplot that
+ had both logarithmic and reverse-order coordinates, as needed for pressure,
+ so instead of using that scale definition here a linear scale is used but
+ values are converted to logarithms before plotting.
+ For that purpose, the XYplot function is redefined to return the logarithm
+ of the pressure rather than the pressure as the second coordinate.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<XYplot, echo=TRUE, include=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+XYplot <- function (.T, .p) {    
+\end_layout
+
+\begin_layout Plain Layout
+
+  return (data.frame(X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop),
+                                        Y=log10(.p))) 
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here is code to construct the ggplot definition, with reference to the data
+ already generated for the isopleths:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<ggplot-construction, echo=TRUE, include=TRUE, warning=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+NPL <- length (pLevels)
+\end_layout
+
+\begin_layout Plain Layout
+
+XP <- vector()
+\end_layout
+
+\begin_layout Plain Layout
+
+YP <- vector()
+\end_layout
+
+\begin_layout Plain Layout
+
+for (p in pLevels) {  # in general, this is poor, a very slow method in
+ R.
+ But ...
+\end_layout
+
+\begin_layout Plain Layout
+
+  lp <- log10(p)
+\end_layout
+
+\begin_layout Plain Layout
+
+  XP <- c(XP, c(0,1,NA))
+\end_layout
+
+\begin_layout Plain Layout
+
+  YP <- c(YP, lp, lp, 0)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+XYP <- data.frame (X=XP, Y=YP)
+\end_layout
+
+\begin_layout Plain Layout
+
+XYP2 <- XYP           # 2nd data.frame to hold line definition skipping even
+ levels,
+\end_layout
+
+\begin_layout Plain Layout
+
+                      # for plotting solid pressure lines instead of dashed
+\end_layout
+
+\begin_layout Plain Layout
+
+sq <- 4:5             # assemble a vector of points in XYP2 to skip
+\end_layout
+
+\begin_layout Plain Layout
+
+j <- 1
+\end_layout
+
+\begin_layout Plain Layout
+
+while (4+6*j+1 <= length (XYP2$X)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  sq <- c(sq, (4+6*j):(4+6*j+1))
+\end_layout
+
+\begin_layout Plain Layout
+
+  j <- j + 1
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+XYP2$X[sq] <- NA      # this forces the flagged points to be skipped
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# Define g to hold the plot definition and the pressure lines
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- ggplot (data=XYP, aes(x=X, y=Y)) + ylim(log10(pBot),log10(pTop))
+\end_layout
+
+\begin_layout Plain Layout
+
+         # set a background color
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + theme(panel.background = element_rect(fill = bColor))
+\end_layout
+
+\begin_layout Plain Layout
+
+         # plot the pressure lines, first dashed, then solid
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_path (data=XYP, aes(x=X, y=Y), color=pColor, lty=2)
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_path (data=XYP2, aes(x=X, y=Y), color=pColor, lty=1)
+\end_layout
+
+\begin_layout Plain Layout
+
+         # suppress auto grid lines and axis labels and ticks
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + theme(panel.grid.major = element_blank())
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + theme(panel.grid.minor = element_blank())
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + theme (axis.text = element_blank ())
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + theme (axis.ticks = element_blank ())
+\end_layout
+
+\begin_layout Plain Layout
+
+         # specify characters for axes
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + theme (axis.title=element_text(face="plain",size=12,colour="blue"))
+\end_layout
+
+\begin_layout Plain Layout
+
+         # add a border to complete the box around the plot
+\end_layout
+
+\begin_layout Plain Layout
+
+border <- data.frame (X=c(0,0,NA,1,1), 
+\end_layout
+
+\begin_layout Plain Layout
+
+                      Y=c(log10(pBot),log10(pTop),log10(pBot),log10(pBot),log10(
+pTop)))
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_path (data=border, color=pColor, lwd=plwd)
+\end_layout
+
+\begin_layout Plain Layout
+
+        # write the axis labels
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + xlab (expression (paste("Temperature or dew point [",degree,"C]")))
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + ylab ("Pressure [hPa]")
+\end_layout
+
+\begin_layout Plain Layout
+
+         # label the pressure lines, all in one geom_text call with data
+ in DLPLS
+\end_layout
+
+\begin_layout Plain Layout
+
+pls <- seq (pBot, pTop, by=-100)
+\end_layout
+
+\begin_layout Plain Layout
+
+LPLS <- length(pls)
+\end_layout
+
+\begin_layout Plain Layout
+
+labl <- character()
+\end_layout
+
+\begin_layout Plain Layout
+
+for (i in 1:LPLS) {labl <- c(labl, sprintf("%d", pls[i]))}
+\end_layout
+
+\begin_layout Plain Layout
+
+DLPLS <- data.frame (X=rep(-0.025, LPLS), Y=log10(pls), LABEL=labl)
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_text (data=DLPLS, aes(x=X, y=Y, label=LABEL), size=4)
+\end_layout
+
+\begin_layout Plain Layout
+
+         # draw the isotherms
+\end_layout
+
+\begin_layout Plain Layout
+
+xt <- vector ()
+\end_layout
+
+\begin_layout Plain Layout
+
+yt <- vector ()
+\end_layout
+
+\begin_layout Plain Layout
+
+for (t in tLevels) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  XPb <- XYplot (t, pBot)        # (x,y) at bottom axis
+\end_layout
+
+\begin_layout Plain Layout
+
+  XPt <- XYplot (t, pTop)        # (x,y) at top axis
+\end_layout
+
+\begin_layout Plain Layout
+
+  if (XPt$X <= 0) {next}         # skip lines out of range
+\end_layout
+
+\begin_layout Plain Layout
+
+  if (XPb$X >= 1) {next}
+\end_layout
+
+\begin_layout Plain Layout
+
+  if (XPb$X < 0) {               # truncate lines to stay within plot area
+\end_layout
+
+\begin_layout Plain Layout
+
+    XPb$Y <- XPb$Y+XPb$X
+\end_layout
+
+\begin_layout Plain Layout
+
+    XPb$X <- 0
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+  if (XPt$X > 1) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    XPt$Y <- XPt$Y + XPt$X - 1
+\end_layout
+
+\begin_layout Plain Layout
+
+    XPt$X <- 1
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+  xt <- c(xt, c(XPb$X, XPt$X, NA))
+\end_layout
+
+\begin_layout Plain Layout
+
+  yt <- c(yt, c(XPb$Y, XPt$Y, NA))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+DT <- data.frame (X = xt, Y = yt)
+\end_layout
+
+\begin_layout Plain Layout
+
+DT2 <- DT
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_path (data=DT, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=2)
+\end_layout
+
+\begin_layout Plain Layout
+
+sq <- 4:5
+\end_layout
+
+\begin_layout Plain Layout
+
+j <- 1
+\end_layout
+
+\begin_layout Plain Layout
+
+while (4+6*j+1 <= length(DT2$X)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  sq <- c(sq, (4+6*j):(4+6*j+1))
+\end_layout
+
+\begin_layout Plain Layout
+
+  j <- j + 1
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+DT2$X[sq] <- NA
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_path (data=DT2, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=1)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+## add text for temperature, labeling every other line
+\end_layout
+
+\begin_layout Plain Layout
+
+pltt <- seq (tLevels[3], tLevels[length(tLevels)-2], by=2*(tLevels[2]-tLevels[1]
+))
+\end_layout
+
+\begin_layout Plain Layout
+
+LPLT <- length (pltt)
+\end_layout
+
+\begin_layout Plain Layout
+
+lablt <- character()
+\end_layout
+
+\begin_layout Plain Layout
+
+for (i in 1:LPLT) {lablt <- c(lablt, sprintf("%d", pltt[i]))}
+\end_layout
+
+\begin_layout Plain Layout
+
+lablt[lablt=="0"] <- "0  "         # move the 0 to look better
+\end_layout
+
+\begin_layout Plain Layout
+
+DLPLT <- data.frame (X=XYplot (pltt, pBot)$X, Y=rep(log10(pBot), LPLT), LABEL=lab
+lt)
+\end_layout
+
+\begin_layout Plain Layout
+
+DLPLT2 <- DLPLT [(DLPLT$X > 0), ]
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_text (data=DLPLT2, aes(x=X, y=Y, label=LABEL, angle=45, hjust=1.5,
+ vjust=0.5),
+\end_layout
+
+\begin_layout Plain Layout
+
+                    size=4)
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_text (data=DLPLT2, aes(x=1.02, y=Y-1+X, label=LABEL, angle=45,
+ hjust=-0.3, vjust=-0.0),
+\end_layout
+
+\begin_layout Plain Layout
+
+                    size=3.5)
+\end_layout
+
+\begin_layout Plain Layout
+
+DLPLT3 <- DLPLT[(DLPLT$X <= 0), ]
+\end_layout
+
+\begin_layout Plain Layout
+
+DLPLT3 <- DLPLT3[(DLPLT3$X > -1), ]
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_text (data=DLPLT3, aes(x=X+1, y=log10(pTop), label=LABEL,
+ angle=45, hjust=-0.2, vjust=0.2),
+\end_layout
+
+\begin_layout Plain Layout
+
+                    size=3.5)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+## add variables from SkewTData:
+\end_layout
+
+\begin_layout Plain Layout
+
+         # first set pressure out-of-plot to be missing
+\end_layout
+
+\begin_layout Plain Layout
+
+SkewTData$P[SkewTData$P > pBot] <- NA
+\end_layout
+
+\begin_layout Plain Layout
+
+SkewTData$P[SkewTData$P < pTop] <- NA
+\end_layout
+
+\begin_layout Plain Layout
+
+         # convert everything else to plot coordinates
+\end_layout
+
+\begin_layout Plain Layout
+
+for (name in names(SkewTData)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  if (name == 'P') {next}
+\end_layout
+
+\begin_layout Plain Layout
+
+  SkewTData[, name] <- XYplot (SkewTData[, name], SkewTData$P)$X
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+SkewTData$P <- log10(SkewTData$P)
+\end_layout
+
+\begin_layout Plain Layout
+
+         # define a function to use to limit variables to plot area
+\end_layout
+
+\begin_layout Plain Layout
+
+LimitToPlotArea <- function (name) {         # assumes x range is (0,1)
+\end_layout
+
+\begin_layout Plain Layout
+
+  Valid <- (SkewTData[ , name] <= 1)
+\end_layout
+
+\begin_layout Plain Layout
+
+  Valid[SkewTData[ , name] < 0] <- FALSE
+\end_layout
+
+\begin_layout Plain Layout
+
+  SkewTData[ , name][!Valid] <<- NA
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+         # mixing-ratio lines: accumulate all into xmr,ymr
+\end_layout
+
+\begin_layout Plain Layout
+
+xmr <- vector ()
+\end_layout
+
+\begin_layout Plain Layout
+
+ymr <- vector ()
+\end_layout
+
+\begin_layout Plain Layout
+
+for (name in names(SkewTData)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  if (grepl ("MR", name)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    #v <- sub ("MR", "", name)
+\end_layout
+
+\begin_layout Plain Layout
+
+    #val <- as.numeric (v)
+\end_layout
+
+\begin_layout Plain Layout
+
+         # set points outside plot range to missing
+\end_layout
+
+\begin_layout Plain Layout
+
+    Valid <- (SkewTData[,name] <= 1)
+\end_layout
+
+\begin_layout Plain Layout
+
+    Valid[(SkewTData[ , name] < 0)] <- FALSE
+\end_layout
+
+\begin_layout Plain Layout
+
+    SkewTData[, name][!Valid] <- NA
+\end_layout
+
+\begin_layout Plain Layout
+
+    xmr <- c(xmr, SkewTData[ , name])
+\end_layout
+
+\begin_layout Plain Layout
+
+    ymr <- c(ymr, SkewTData$P)
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+MRDF <- data.frame (X=xmr, Y=ymr)
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_path (data=MRDF, aes(x=X, y=Y), color='darkgreen', lty=4,
+ lwd=0.8)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+         # potential temperature lines
+\end_layout
+
+\begin_layout Plain Layout
+
+xmth <- vector ()
+\end_layout
+
+\begin_layout Plain Layout
+
+ymth <- vector ()
+\end_layout
+
+\begin_layout Plain Layout
+
+for (name in names(SkewTData)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  if (grepl ("Theta", name)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    if (grepl ("R", name) || grepl ("B", name) || grepl ("P", name) || 
+\end_layout
+
+\begin_layout Plain Layout
+
+          grepl("I", name)) {next}
+\end_layout
+
+\begin_layout Plain Layout
+
+    Valid <- (SkewTData[ , name] <= 1)
+\end_layout
+
+\begin_layout Plain Layout
+
+    Valid[(SkewTData[ , name] < 0)] <- FALSE
+\end_layout
+
+\begin_layout Plain Layout
+
+    SkewTData[ , name][!Valid] <- NA
+\end_layout
+
+\begin_layout Plain Layout
+
+    xmth <- c(xmth, SkewTData[ , name])
+\end_layout
+
+\begin_layout Plain Layout
+
+    ymth <- c(ymth, SkewTData$P)
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+MRDFTH <- data.frame (X=xmth, Y=ymth)
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_path (data=MRDFTH, aes(x=X, y=Y), color='darkorange', lty=1,
+ lwd=0.4)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+         # equivalent potential temperature: have several to choose from:
+\end_layout
+
+\begin_layout Plain Layout
+
+         #   I  results from integration
+\end_layout
+
+\begin_layout Plain Layout
+
+         #   R  results from Rossby definition
+\end_layout
+
+\begin_layout Plain Layout
+
+         #   B  results from Bolton definition
+\end_layout
+
+\begin_layout Plain Layout
+
+         #   P  results from Davies-Jones definition
+\end_layout
+
+\begin_layout Plain Layout
+
+ThetaESelection <- "I"
+\end_layout
+
+\begin_layout Plain Layout
+
+ThetaEVariable <- paste ("Theta", ThetaESelection, sep='')
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+## equivalent potential temperature
+\end_layout
+
+\begin_layout Plain Layout
+
+xmI <- vector ()
+\end_layout
+
+\begin_layout Plain Layout
+
+ymI <- vector ()
+\end_layout
+
+\begin_layout Plain Layout
+
+for (name in names(SkewTData)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+  if (grepl (ThetaEVariable, name)) {
+\end_layout
+
+\begin_layout Plain Layout
+
+    #v <- sub (ThetaEVariable, "", name)
+\end_layout
+
+\begin_layout Plain Layout
+
+    #val <- as.numeric (v)
+\end_layout
+
+\begin_layout Plain Layout
+
+    Valid <- (SkewTData[ , name] <= 1)
+\end_layout
+
+\begin_layout Plain Layout
+
+    Valid[SkewTData[ , name] < 0] <- FALSE
+\end_layout
+
+\begin_layout Plain Layout
+
+    SkewTData[ , name][!Valid] <- NA
+\end_layout
+
+\begin_layout Plain Layout
+
+    xmI <- c(xmI, SkewTData[ , name])
+\end_layout
+
+\begin_layout Plain Layout
+
+    ymI <- c(ymI, SkewTData$P)
+\end_layout
+
+\begin_layout Plain Layout
+
+  }
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+MRDFI <- data.frame (X=xmI, Y=ymI)
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_path (data=MRDFI, aes(x=X, y=Y), color='red', lty=1, lwd=0.4)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+## save the diagram for other uses
+\end_layout
+
+\begin_layout Plain Layout
+
+skewTDiagram <- g
+\end_layout
+
+\begin_layout Plain Layout
+
+save(skewTDiagram, file="./skewTDiagram.Rdata")
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Adding flight data to the background
+\end_layout
+
+\begin_layout Standard
+Once the diagram is constructed as above, the following code chunk can be
+ used to superimpose a measured sounding.
+ Furthermore, the diagram can be preserved before this addition so that
+ subsequent uses can just retrieve the ggplot definition of the background
+ without the need to construct it again.
+\end_layout
+
+\begin_layout Standard
+This is the basis for the function in Ranadu called SkewTDiagram( ), which
+ returns the plot definition with a supplied sounding added to the background
+ as preserved here.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<add-flight-data, echo=TRUE, include=TRUE, fig.height=6, warning=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+## plot a sample sounding
+\end_layout
+
+\begin_layout Plain Layout
+
+# load("./skewTDiagram.Rdata")
+\end_layout
+
+\begin_layout Plain Layout
+
+# g <- skewTDiagram
+\end_layout
+
+\begin_layout Plain Layout
+
+Directory <- DataDirectory ()
+\end_layout
+
+\begin_layout Plain Layout
+
+Flight <- "rf16"   			
+\end_layout
+
+\begin_layout Plain Layout
+
+Project = "DEEPWAVE"			
+\end_layout
+
+\begin_layout Plain Layout
+
+fname = sprintf("%s%s/%s%s.nc", Directory,Project,Project,Flight)
+\end_layout
+
+\begin_layout Plain Layout
+
+Data <- getNetCDF (fname, standardVariables(c("THETAP")))		
+\end_layout
+
+\begin_layout Plain Layout
+
+r <- setRange (Data$Time, 123100, 125500)
+\end_layout
+
+\begin_layout Plain Layout
+
+DS <- Data[r, c("PSXC", "ATX", "DPXC")]
+\end_layout
+
+\begin_layout Plain Layout
+
+DP <- data.frame (P=XYplot (DS$ATX, DS$PSXC)$Y, ATX=XYplot (DS$ATX, DS$PSXC)$X,
+ DPXC=XYplot(DS$DPXC, DS$PSXC)$X)
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_path (data=DP, aes(x=ATX, y=P, color='ATX'), lwd=1.5)
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_path (data=DP, aes(x=DPXC, y=P, color='DPXC'), lwd=1.5)
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + theme(legend.position=c(0.2,0.85), legend.background=element_rect(fill="whi
+te"))
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + labs(color='Measurement')
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + scale_colour_manual(name = "Measurement",values = c('black', 'darkgreen
+'))
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+print(g)
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -3248,6 +4495,24 @@ load ("./SkewTData.Rdata")
 \family sans
 \color blue
 -- End of Memo --
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+vfill
+\backslash
+eject
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3508,6 +4773,10 @@ Sexpr{thisFileName}.pdf
 \backslash
 
 \backslash
+skewTDiagram.Rdata
+\backslash
+
+\backslash
 SessionInfo}
 \end_layout
 
@@ -3580,8 +4849,8 @@ cat (toLatex(sessionInfo()), file="SessionInfo")
 
 \begin_layout Plain Layout
 
-system (sprintf("zip %s.zip %s.Rnw %s.pdf SessionInfo", thisFileName, thisFileName,
- thisFileName))
+system (sprintf("zip %s.zip %s.Rnw %s.pdf skewTDiagram.Rdata SessionInfo", thisFileN
+ame, thisFileName, thisFileName))
 \end_layout
 
 \begin_layout Plain Layout
@@ -3591,37 +4860,6 @@ system (sprintf("zip %s.zip %s.Rnw %s.pdf SessionInfo", thisFileName, thisFileNa
 \begin_layout Plain Layout
 
 @ 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-%
-\backslash
-attach{attachment}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-
-\backslash
-attachm{ProgramFile
-\backslash
-
-\backslash
-Document.pdf}
 \end_layout
 
 \end_inset

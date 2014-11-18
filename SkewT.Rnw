@@ -95,31 +95,21 @@
 
 thisFileName <- "SkewT"
 require(Ranadu, quietly = TRUE, warn.conflicts=FALSE)
-require(ggplot2)
-require(grid)
+require (nleqslv, quietly = TRUE, warn.conflicts=FALSE)
 library(knitr)
-require(ggthemes)
-require(vioplot)
-require(plyr)
-opts_chunk$set(echo=FALSE, include=FALSE, fig.lp="fig:", size='footnotesize')
-opts_chunk$set(fig.width=6, fig.height=5, fig.pos="center", digits=4)
-## read a file for access to sample data
-Directory <- DataDirectory ()
-Flight <- "rf16" 				# XXX change this
-Project = "DEEPWAVE"			 # XXX change this
-fname = sprintf("%s%s/%s%s.nc", Directory,Project,Project,Flight)
-Data <- getNetCDF (fname, standardVariables(c("THETAP")))		#XXX set variables needed here
-#SaveRData <- sprintf("%s.Rdata.gz", thisFileName)
+opts_chunk$set (echo=FALSE, include=FALSE, fig.lp="fig:", size='footnotesize')
+opts_chunk$set (fig.width=6, fig.height=6, fig.pos="center", digits=4)
+opts_chunk$set (warnings=FALSE, strip.white=TRUE)
 EPS <- StandardConstant ("MWW") / StandardConstant ("MWD")
-TZERO <- StandardConstant("Tzero")
+TZERO <- StandardConstant ("Tzero")
 
 @
 
 
 \section{Introduction and goal}
 
-The skew-T diagram (formally, the Skew-T log-p diagram) and related
-thermodynamic diagrams (tephigram, emagram, pastagram, aerogram, Stüve
+The skew-T diagram (formally, the Skew-T log-P diagram) and related
+thermodynamic diagrams (tephigram, emagram, pastagram, aerogram, St?ve
 diagram) are standard tools for analysis of stability in the atmosphere.
 There are many versions of this diagram available. A fairly recent
 and very well documented source is \href{http://bretwhissel.net/skewt/}{this URL},
@@ -148,10 +138,8 @@ diagrams that are readily available. Furthermore, any definition of
 pseudo-adiabatic equivalent potential temperature will likely involve
 approximations because the specific heat and latent heat of vaporization
 of water vary with temperature, and the former has not been included
-even in the Davies-Jones formula, which did not use the Murphy-Koop
-representation of equilibrium water vapor pressure. For that reason,
-the goal here is to construct new diagrams based on those two advances
-and compare the results to standard diagrams. For the pseudo-adiabatics,
+even in the Davies-Jones formula. For that reason, the goal here is
+to construct new diagrams based on those two advances. For the pseudo-adiabatics,
 the calculation will be based on direct integration of the differential
 equation representing constant entropy, as discussed in a 2011 memo
 referenced from the document ProcessingAlgorithms.pdf.
@@ -187,7 +175,7 @@ a function that provides the abscissa for the plot, as follows:
 ####
 # references tBot, tTop, pBot, pTop in the global environment!! caution!!
 XYplot <- function (.T, .p) { 
-  return (data.frame(X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop), Y=.p))
+  return (data.frame (X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop), Y=.p))
 }
 @
 
@@ -270,13 +258,12 @@ as an indication of error the value of $T$ the difference between
 the above value and that obtained for 100\% relative humidity, using
 the relationship \\
 \[
-\frac{R}{c_{p}}=\frac{R_{d}}{c_{pd}(1+\frac{1}{5}\frac{e}{p})}^{\prime}
+\frac{R}{c_{p}}=\frac{R_{d}}{c_{pd}(1+\frac{1}{5}\frac{e}{p})}
 \]
 
 
-where quantities with subscript $d$ refer to dry air and $\epsilon$
-is the ratio of the molecular weight of water to that of dry air (cf.
-ProcessingAlgorithms.pdf, p. 38).
+where quantities with subscript $d$ refer to dry air (cf.\href{https://drive.google.com/file/d/0B1kIUH45ca5Ab2Z6cld1M1cydjA/view?usp=sharing}{ ProcessingAlgorithms.pdf},
+p. 38).
 
 <<basic-lines, eval=FALSE, echo=TRUE, include=TRUE>>=
 pBot <- 1100
@@ -286,10 +273,10 @@ tTop <- 50
 tBot <- -50
 tMin <- -140
 CP <- SpecificHeats ()
-RoverCP <- CP[3] / CP[1]
+RbyCP <- CP[3] / CP[1]
 pLevels <- seq (pBot, pTop, by=-5)
-tLevels <- seq (tMin, tTop, by=1)
-plot (c(0.,1.), c(pTop, pBot), log='y', ylim=c(1000,100),pch=NA)
+tLevels <- seq (tMin, tTop, by=5)
+plot (c(0., 1.), c(pTop, pBot), log='y', ylim=c(1000, 100),pch=NA)
 for (p in pLevels) {
   lines (c(0., 1.), c(p, p))
 }
@@ -302,15 +289,11 @@ for (t in tLevels) {
   lines (c(x1, x2), c(y1, y2), col='blue')  
 }
 
-## start building data.frame
+## start building data.frame to contain arrays holding lines to be plotted
 SkewTData <- data.frame (P=pLevels)
-
-TL1 <- XYplot (tLevels, pBot)
-TL2 <- XYplot (tLevels, pTop)
-names <- "P"
 for (theta in seq (TZERO - 100, TZERO + 200, by=5)) {
-  lines (XYplot (theta / ((1000/pLevels) ^ RoverCP) - TZERO, pLevels), col='orange')
-  SkewTData[sprintf("Theta%.2f", theta)] <- theta / ((1000/pLevels) ^ RoverCP) - TZERO
+  lines (XYplot (theta / ((1000/pLevels) ^ RbyCP) - TZERO, pLevels), col='orange')
+  SkewTData[sprintf("Theta%.2f", theta)] <- theta / ((1000/pLevels) ^ RbyCP) - TZERO
 }
 @
 
@@ -359,7 +342,7 @@ rMix <- c(0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1:3, 5, seq (10, 30, by=5)) * 0.0
 tt <- pLevels  # overwritten below, just a quick allocation
 for (rmix in rMix) {
   for (i in 1:length (pLevels)) {
-    tt[i] <- nleqslv::nleqslv (10., TfromRmix, jac=NULL, rmix, pLevels[i])$x
+    tt[i] <- nleqslv (10., TfromRmix, jac=NULL, rmix, pLevels[i])$x
   }
   lines (XYplot (tt, pLevels), col='darkgreen', lty=2)
   SkewTData[sprintf("MR%.02f", rmix*1000)] <- tt
@@ -567,7 +550,7 @@ LCL <- function (.RH, .T, .p) {  # .RH in a fraction (not %), .T in deg.C, .p in
   CPM <- SpecificHeats (et/.p)
   RbyCP <- CPM[3] / CPM[1]
   thetam <- .T+TZERO * (1000 / .p)^RbyCP
-  pLCL <- nleqslv::nleqslv (.p, LCLfn, jac=NULL, RbyCP, thetam, mr)
+  pLCL <- nleqslv (.p, LCLfn, jac=NULL, RbyCP, thetam, mr)
   tLCL <- thetam / (1000/pLCL)^RbyCP
   return (data.frame ("pLCL"=pLCL, "tLCL"=tLCL))
 }
@@ -575,11 +558,11 @@ LCL <- function (.RH, .T, .p) {  # .RH in a fraction (not %), .T in deg.C, .p in
 deriv1 <- function (.T, .LV) { # evaluate last partial deriv. in (10)
   delt <- 0.1
   tc <- .T + delt
-  LVp <- .LV + (CPWaterVapor(tc)-SpecificHeatLiquidWater(tc)) * delt
+  LVp <- .LV + (CPWaterVapor (tc) - SpecificHeatLiquidWater (tc)) * delt
   esp <- MurphyKoop (tc)
   delp <- LVp * esp / (.T + delt + TZERO)
   tc <- .T - delt
-  LVm <- .LV - (CPWaterVapor(tc)-SpecificHeatLiquidWater(tc)) * delt
+  LVm <- .LV - (CPWaterVapor (tc) - SpecificHeatLiquidWater (tc)) * delt
   esm <- MurphyKoop (tc)
   delm <- LVm * esm / (.T - delt + TZERO)
   return ((delp-delm) / (2*delt))
@@ -594,8 +577,8 @@ dTdpdF <- function (.T, .pd, .LV, .rtot=NA, .aflag=FALSE) {
     rx <- MixingRatio (e/p)
   }
   tk <- .T + TZERO
-  cp_x <- CP[1] + rx * SpecificHeatLiquidWater(.T)
-  A <- ((tk*SpecificHeats(0)[3]+.LV*MixingRatio(e/p))/.pd) /
+  cp_x <- CP[1] + rx * SpecificHeatLiquidWater (.T)
+  A <- ((tk * SpecificHeats(0)[3] + .LV * MixingRatio (e/p)) / .pd) /
        (cp_x + (EPS * tk / .pd) * deriv1 (.T, .LV))  
   return (A)
 }
@@ -607,7 +590,7 @@ dTdpdF <- function (.T, .pd, .LV, .rtot=NA, .aflag=FALSE) {
 # value returned, temperature at p2
 # aflag  FALSE for pseudoadiabatic, adiabatic otherwise
 IntegrationStep <- function (tc, pd1, pd2, rtot, aflag) {
-  nsteps <- 2
+  nsteps <- 5
   delpd <- (pd1 - pd2) / nsteps
   pd <- pd1
   tk <- tc + TZERO
@@ -631,7 +614,7 @@ IntegrationStep <- function (tc, pd1, pd2, rtot, aflag) {
 }
 @
 
-<<THETA-P, echo=TRUE, include=TRUE, echo=-2, fig.height=6>>=
+<<THETA-P, echo=TRUE, include=TRUE, echo=-2, fig.height=6, warning=FALSE>>=
 <<basic-lines>>
 <<mixing-ratio-lines>>
 
@@ -642,7 +625,7 @@ TfromEPT <- function (.T, .thetaE, .P) {
 #  r <- MixingRatio (e / .P)
 #  lhv <- 2.501e6 - 2370. * .T    # latent heat of vaporization, temp-dependent
 #  expn=lhv * r / (CP[1] * (TZERO + .T))
-#  return (.thetaE - (TZERO+.T)*(1000/(.P-e))^RoverCP * exp(expn))
+#  return (.thetaE - (TZERO+.T)*(1000/(.P-e))^RbyCP * exp(expn))
   return (.thetaE - RossbyEquivalentPotentialTemperature (.P, .T))
 }
 
@@ -659,29 +642,29 @@ tt <- pLevels  # shortut to define new vector
 for (twb in TWB) {
   thetaR <- RossbyEquivalentPotentialTemperature (1000, twb)
   for (i in 1:length(pLevels)) {
-    tt[i] <- nleqslv::nleqslv (10., TfromEPT, jac=NULL, thetaR, pLevels[i])$x
+    tt[i] <- nleqslv (10., TfromEPT, jac=NULL, thetaR, pLevels[i])$x
   }
   lines (XYplot (tt, pLevels), col='cyan')
-  SkewTData[sprintf("ThetaR%.02f", twb+273.15)] <- tt
+  SkewTData[sprintf("ThetaR%.02f", twb+TZERO)] <- tt
 }
 
 for (twb in TWB) {
   thetaB <- BoltonEquivalentPotentialTemperature (1000, twb)
   for (i in 1:length(pLevels)) {
-    tt[i] <- nleqslv::nleqslv (10., TBfromEPT, jac=NULL, thetaB, pLevels[i])$x
+    tt[i] <- nleqslv (10., TBfromEPT, jac=NULL, thetaB, pLevels[i])$x
   }
   lines (XYplot (tt, pLevels), col='green', lwd=2, lty=4)
-  SkewTData[sprintf("ThetaB%.02f", twb+273.15)] <- tt
+  SkewTData[sprintf("ThetaB%.02f", twb+TZERO)] <- tt
 }
 
 
 for (twb in TWB) {  # Davies-Jones form
   thetaP <- EquivalentPotentialTemperature (1000, twb, MurphyKoop (twb))
   for (i in 1:length(pLevels)) {
-    tt[i] <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pLevels[i])$x
+    tt[i] <- nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pLevels[i])$x
   }
   lines (XYplot (tt, pLevels), col='red', lty=2, lwd=1.5)
-  SkewTData[sprintf("ThetaP%.02f", twb+273.15)] <- tt
+  SkewTData[sprintf("ThetaP%.02f", twb+TZERO)] <- tt
 }
 
 
@@ -689,12 +672,12 @@ for (twb in TWB) {  # Davies-Jones form
 CP <- SpecificHeats(0)
 for (twb in TWB) {
   thetaP <- EquivalentPotentialTemperature (1000, twb)
-  ttt <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pBot)$x
+  ttt <- nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pBot)$x
   # get appropriate starting point in dry-air pressure
   pB <- pBot
   while ((p1 <- pB - MurphyKoop (ttt)) < pLevels[2]) {
     pB <- pB + 10
-    ttt <- nleqslv::nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pB)$x
+    ttt <- nleqslv (10., DJTfromEPT, jac=NULL, thetaP, pB)$x
   }
   ptLevels <- pLevels
   ptLevels[1] <- pB
@@ -718,7 +701,7 @@ for (twb in TWB) {
   }
   lines (XYplot (tt, ptLevels), col='brown', lty=2, lwd=3)
 ## this needs correction for diff pdry vs p
-  SkewTData[sprintf("ThetaI%.02f", twb+273.15)] <- tti
+  SkewTData[sprintf("ThetaI%.02f", twb+TZERO)] <- tti
 }
 
 # add a wet-adiabat
@@ -733,8 +716,8 @@ TQfromWBPT <- function (.T, .ThetaQ, .P, .rtot) {
 
 ThetaQ <- WetEquivalentPotentialTemperature (1000, TWB[15])
 rTot <- MixingRatio (MurphyKoop (TWB[15]) / 1000)
-for (i in 1:length(pLevels)) {
-  tt[i] <- nleqslv::nleqslv (10., TQfromWBPT, jac=NULL, ThetaQ, pLevels[i], rTot)$x
+for (i in 1:length (pLevels)) {
+  tt[i] <- nleqslv (10., TQfromWBPT, jac=NULL, ThetaQ, pLevels[i], rTot)$x
 }
 lines (XYplot (tt, pLevels), col='purple', lty=1, lwd=3)
 
@@ -748,25 +731,309 @@ save(SkewTData, file="SkewTData.Rdata")
 
 \subsection{Reasons for using ggplot}
 
-The plot package 'ggplot2' is suited to generation of the background
-for a skew-T plot because it enables generation via layers and preserving
-the results in a reusable form. Layers can represent the isobars,
-isotherms, pseudo-adiabats, etc, and for subsequent use as the background
-for a sounding the result can be generated by the preserved plot definition,
-with the actual sounding over-plotted as an additional layer.
+For the plot generated in the preceding sections, the ``base'' graphics
+of R have been used. The plot package 'ggplot2' is better suited to
+generation of the background for a skew-T plot because it enables
+generation via layers and preserving the results in a reusable form.
+Layers can represent the isobars, isotherms, pseudo-adiabats, etc,
+and for subsequent use as the background for a sounding the result
+can be generated by the preserved plot definition, with the actual
+sounding over-plotted as an additional layer. That is the approach
+taken in the remainder of this document.
 
 
 \subsection{The basic background}
 
+Here are some variables that determine the range covered by the plot.
+These can be changed to give plots covering different areas, although
+some work is still needed to get that to work for other than the standard
+limits here:
+
+<<adjustable-parameters, echo=TRUE, include=TRUE>>=
+####
+##   Here are characteristics for the plot, which can be changed as desired.
+##   Some other characteristics, like definition of which mixing-ratio lines
+##   to plot, have already been determined when the data file was 
+##   generated above; see, for example, MR[] there.
+
+##   background color for plot area
+bColor <- "gray95"
+bColor <- "lightyellow"
+bColor <- "lemonchiffon1"
+bColor <- "cornsilk"
+bColor <- "aliceblue"
+bColor <- "ivory"
+##   color for pressure lines and plot border, and thickness of lines
+pColor <- 'darkblue'        # pressure lines
+plwd <- 0.4                 # line width for pressure lines 
+## color for isotherms
+tColor <- 'darkblue'        # temperature lines
+tlwd=0.4                    # line width for temperature lines
+
+pBot <- 1000                # range in pressure and temperature for the plot
+pTop <- 100
+tBot <- -40
+tTop <- 40
+tMin <- -140                # needed to cover isotherms in top-left of plot
+pLevels <- seq (pBot, pTop, by=-50)    # lines to plot for pressure
+tLevels <- seq (tMin, tTop, by=5)      # lines to plot for temperature
+####
+##   end of changeable plot characteristics
+####
+@
+
 <<ggplot-call-and-first-layers, echo=TRUE, include=TRUE>>=
 require (ggplot2)
+require (ggthemes)
+require (grid)
+library (scales)
+## the following is already in memory if this program is run from the beginning, but
+## some of the items here including the following "load" of the generated data are
+## models for how the generated information can be used. Note that the following datafile
+## contains some variables that are not used below but are present because they were
+## generated for comparison to the variables actually used.
 load ("./SkewTData.Rdata")
-#g <- ggplot (data=SkewTData.Rdata, 
+## read a file for access to sample data
+@
+
+For convenience in determining the correspondence between \{T, P\}
+coordinates and plot coordinates, the basic transformation function
+used above is redefined here, with the same name as before. The reason
+is that there were problems defining a plot with ggplot that had both
+logarithmic and reverse-order coordinates, as needed for pressure,
+so instead of using that scale definition here a linear scale is used
+but values are converted to logarithms before plotting. For that purpose,
+the XYplot function is redefined to return the logarithm of the pressure
+rather than the pressure as the second coordinate.
+
+<<XYplot, echo=TRUE, include=TRUE>>=
+XYplot <- function (.T, .p) {    
+  return (data.frame(X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop),                                        Y=log10(.p))) 
+}
+@
+
+Here is code to construct the ggplot definition, with reference to
+the data already generated for the isopleths:
+
+<<ggplot-construction, echo=TRUE, include=TRUE, warning=FALSE>>=
+NPL <- length (pLevels)
+XP <- vector()
+YP <- vector()
+for (p in pLevels) {  # in general, this is poor, a very slow method in R. But ...
+  lp <- log10(p)
+  XP <- c(XP, c(0,1,NA))
+  YP <- c(YP, lp, lp, 0)
+}
+XYP <- data.frame (X=XP, Y=YP)
+XYP2 <- XYP           # 2nd data.frame to hold line definition skipping even levels,
+                      # for plotting solid pressure lines instead of dashed
+sq <- 4:5             # assemble a vector of points in XYP2 to skip
+j <- 1
+while (4+6*j+1 <= length (XYP2$X)) {
+  sq <- c(sq, (4+6*j):(4+6*j+1))
+  j <- j + 1
+}
+XYP2$X[sq] <- NA      # this forces the flagged points to be skipped
+
+# Define g to hold the plot definition and the pressure lines
+g <- ggplot (data=XYP, aes(x=X, y=Y)) + ylim(log10(pBot),log10(pTop))
+         # set a background color
+g <- g + theme(panel.background = element_rect(fill = bColor))
+         # plot the pressure lines, first dashed, then solid
+g <- g + geom_path (data=XYP, aes(x=X, y=Y), color=pColor, lty=2)
+g <- g + geom_path (data=XYP2, aes(x=X, y=Y), color=pColor, lty=1)
+         # suppress auto grid lines and axis labels and ticks
+g <- g + theme(panel.grid.major = element_blank())
+g <- g + theme(panel.grid.minor = element_blank())
+g <- g + theme (axis.text = element_blank ())
+g <- g + theme (axis.ticks = element_blank ())
+         # specify characters for axes
+g <- g + theme (axis.title=element_text(face="plain",size=12,colour="blue"))
+         # add a border to complete the box around the plot
+border <- data.frame (X=c(0,0,NA,1,1), 
+                      Y=c(log10(pBot),log10(pTop),log10(pBot),log10(pBot),log10(pTop)))
+g <- g + geom_path (data=border, color=pColor, lwd=plwd)
+        # write the axis labels
+g <- g + xlab (expression (paste("Temperature or dew point [",degree,"C]")))
+g <- g + ylab ("Pressure [hPa]")
+         # label the pressure lines, all in one geom_text call with data in DLPLS
+pls <- seq (pBot, pTop, by=-100)
+LPLS <- length(pls)
+labl <- character()
+for (i in 1:LPLS) {labl <- c(labl, sprintf("%d", pls[i]))}
+DLPLS <- data.frame (X=rep(-0.025, LPLS), Y=log10(pls), LABEL=labl)
+g <- g + geom_text (data=DLPLS, aes(x=X, y=Y, label=LABEL), size=4)
+         # draw the isotherms
+xt <- vector ()
+yt <- vector ()
+for (t in tLevels) {
+  XPb <- XYplot (t, pBot)        # (x,y) at bottom axis
+  XPt <- XYplot (t, pTop)        # (x,y) at top axis
+  if (XPt$X <= 0) {next}         # skip lines out of range
+  if (XPb$X >= 1) {next}
+  if (XPb$X < 0) {               # truncate lines to stay within plot area
+    XPb$Y <- XPb$Y+XPb$X
+    XPb$X <- 0
+  }
+  if (XPt$X > 1) {
+    XPt$Y <- XPt$Y + XPt$X - 1
+    XPt$X <- 1
+  }
+  xt <- c(xt, c(XPb$X, XPt$X, NA))
+  yt <- c(yt, c(XPb$Y, XPt$Y, NA))
+}
+DT <- data.frame (X = xt, Y = yt)
+DT2 <- DT
+g <- g + geom_path (data=DT, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=2)
+sq <- 4:5
+j <- 1
+while (4+6*j+1 <= length(DT2$X)) {
+  sq <- c(sq, (4+6*j):(4+6*j+1))
+  j <- j + 1
+}
+DT2$X[sq] <- NA
+g <- g + geom_path (data=DT2, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=1)
+
+## add text for temperature, labeling every other line
+pltt <- seq (tLevels[3], tLevels[length(tLevels)-2], by=2*(tLevels[2]-tLevels[1]))
+LPLT <- length (pltt)
+lablt <- character()
+for (i in 1:LPLT) {lablt <- c(lablt, sprintf("%d", pltt[i]))}
+lablt[lablt=="0"] <- "0  "         # move the 0 to look better
+DLPLT <- data.frame (X=XYplot (pltt, pBot)$X, Y=rep(log10(pBot), LPLT), LABEL=lablt)
+DLPLT2 <- DLPLT [(DLPLT$X > 0), ]
+g <- g + geom_text (data=DLPLT2, aes(x=X, y=Y, label=LABEL, angle=45, hjust=1.5, vjust=0.5),
+                    size=4)
+g <- g + geom_text (data=DLPLT2, aes(x=1.02, y=Y-1+X, label=LABEL, angle=45, hjust=-0.3, vjust=-0.0),
+                    size=3.5)
+DLPLT3 <- DLPLT[(DLPLT$X <= 0), ]
+DLPLT3 <- DLPLT3[(DLPLT3$X > -1), ]
+g <- g + geom_text (data=DLPLT3, aes(x=X+1, y=log10(pTop), label=LABEL, angle=45, hjust=-0.2, vjust=0.2),
+                    size=3.5)
+
+## add variables from SkewTData:
+         # first set pressure out-of-plot to be missing
+SkewTData$P[SkewTData$P > pBot] <- NA
+SkewTData$P[SkewTData$P < pTop] <- NA
+         # convert everything else to plot coordinates
+for (name in names(SkewTData)) {
+  if (name == 'P') {next}
+  SkewTData[, name] <- XYplot (SkewTData[, name], SkewTData$P)$X
+}
+SkewTData$P <- log10(SkewTData$P)
+         # define a function to use to limit variables to plot area
+LimitToPlotArea <- function (name) {         # assumes x range is (0,1)
+  Valid <- (SkewTData[ , name] <= 1)
+  Valid[SkewTData[ , name] < 0] <- FALSE
+  SkewTData[ , name][!Valid] <<- NA
+}
+
+         # mixing-ratio lines: accumulate all into xmr,ymr
+xmr <- vector ()
+ymr <- vector ()
+for (name in names(SkewTData)) {
+  if (grepl ("MR", name)) {
+    #v <- sub ("MR", "", name)
+    #val <- as.numeric (v)
+         # set points outside plot range to missing
+    Valid <- (SkewTData[,name] <= 1)
+    Valid[(SkewTData[ , name] < 0)] <- FALSE
+    SkewTData[, name][!Valid] <- NA
+    xmr <- c(xmr, SkewTData[ , name])
+    ymr <- c(ymr, SkewTData$P)
+  }
+}
+MRDF <- data.frame (X=xmr, Y=ymr)
+g <- g + geom_path (data=MRDF, aes(x=X, y=Y), color='darkgreen', lty=4, lwd=0.8)
+
+         # potential temperature lines
+xmth <- vector ()
+ymth <- vector ()
+for (name in names(SkewTData)) {
+  if (grepl ("Theta", name)) {
+    if (grepl ("R", name) || grepl ("B", name) || grepl ("P", name) || 
+          grepl("I", name)) {next}
+    Valid <- (SkewTData[ , name] <= 1)
+    Valid[(SkewTData[ , name] < 0)] <- FALSE
+    SkewTData[ , name][!Valid] <- NA
+    xmth <- c(xmth, SkewTData[ , name])
+    ymth <- c(ymth, SkewTData$P)
+  }
+}
+MRDFTH <- data.frame (X=xmth, Y=ymth)
+g <- g + geom_path (data=MRDFTH, aes(x=X, y=Y), color='darkorange', lty=1, lwd=0.4)
+
+         # equivalent potential temperature: have several to choose from:
+         #   I  results from integration
+         #   R  results from Rossby definition
+         #   B  results from Bolton definition
+         #   P  results from Davies-Jones definition
+ThetaESelection <- "I"
+ThetaEVariable <- paste ("Theta", ThetaESelection, sep='')
+
+## equivalent potential temperature
+xmI <- vector ()
+ymI <- vector ()
+for (name in names(SkewTData)) {
+  if (grepl (ThetaEVariable, name)) {
+    #v <- sub (ThetaEVariable, "", name)
+    #val <- as.numeric (v)
+    Valid <- (SkewTData[ , name] <= 1)
+    Valid[SkewTData[ , name] < 0] <- FALSE
+    SkewTData[ , name][!Valid] <- NA
+    xmI <- c(xmI, SkewTData[ , name])
+    ymI <- c(ymI, SkewTData$P)
+  }
+}
+MRDFI <- data.frame (X=xmI, Y=ymI)
+g <- g + geom_path (data=MRDFI, aes(x=X, y=Y), color='red', lty=1, lwd=0.4)
+
+## save the diagram for other uses
+skewTDiagram <- g
+save(skewTDiagram, file="./skewTDiagram.Rdata")
+
+@
+
+
+\subsection{Adding flight data to the background}
+
+Once the diagram is constructed as above, the following code chunk
+can be used to superimpose a measured sounding. Furthermore, the diagram
+can be preserved before this addition so that subsequent uses can
+just retrieve the ggplot definition of the background without the
+need to construct it again.
+
+This is the basis for the function in Ranadu called SkewTDiagram(
+), which returns the plot definition with a supplied sounding added
+to the background as preserved here.
+
+<<add-flight-data, echo=TRUE, include=TRUE, fig.height=6, warning=FALSE>>=
+## plot a sample sounding
+# load("./skewTDiagram.Rdata")
+# g <- skewTDiagram
+Directory <- DataDirectory ()
+Flight <- "rf16"   			
+Project = "DEEPWAVE"			
+fname = sprintf("%s%s/%s%s.nc", Directory,Project,Project,Flight)
+Data <- getNetCDF (fname, standardVariables(c("THETAP")))		
+r <- setRange (Data$Time, 123100, 125500)
+DS <- Data[r, c("PSXC", "ATX", "DPXC")]
+DP <- data.frame (P=XYplot (DS$ATX, DS$PSXC)$Y, ATX=XYplot (DS$ATX, DS$PSXC)$X, DPXC=XYplot(DS$DPXC, DS$PSXC)$X)
+g <- g + geom_path (data=DP, aes(x=ATX, y=P, color='ATX'), lwd=1.5)
+g <- g + geom_path (data=DP, aes(x=DPXC, y=P, color='DPXC'), lwd=1.5)
+g <- g + theme(legend.position=c(0.2,0.85), legend.background=element_rect(fill="white"))
+g <- g + labs(color='Measurement')
+g <- g + scale_colour_manual(name = "Measurement",values = c('black', 'darkgreen'))
+
+print(g)
+
 @
 
 \begin{center}
 \textsf{\textcolor{blue}{-- End of Memo --}}
 \par\end{center}
+
+\vfill\eject
 
 Reproducibility:
 
@@ -779,7 +1046,7 @@ Reproducibility:
 \textsf{\textsc{\textcolor{blue}{Git:}}} & git@github.com:WilliamCooper/\Sexpr{thisFileName}.git\tabularnewline
 \end{tabular}
 
-\attachm{\Sexpr{thisFileName}.Rnw\\\Sexpr{thisFileName}.pdf\\SessionInfo}
+\attachm{\Sexpr{thisFileName}.Rnw\\\Sexpr{thisFileName}.pdf\\skewTDiagram.Rdata\\SessionInfo}
 %\cc{first attachment\\second\\3rd att}
 %\attach{attachment}
 %\attachm{first\\second} %\cc{first attachment\\second\\3rd att}
@@ -788,13 +1055,9 @@ cat (toLatex(sessionInfo()), file="SessionInfo")
 
 @ 
 <<make-zip-archive, echo=TRUE, INCLUDE=TRUE>>=
-system (sprintf("zip %s.zip %s.Rnw %s.pdf SessionInfo", thisFileName, thisFileName, thisFileName))
+system (sprintf("zip %s.zip %s.Rnw %s.pdf skewTDiagram.Rdata SessionInfo", thisFileName, thisFileName, thisFileName))
 
 @ 
-
-%\attach{attachment}
-
-\attachm{ProgramFile\\Document.pdf}
 
 %\cc{first attachment\\second\\3rd att}
 \end{document}
