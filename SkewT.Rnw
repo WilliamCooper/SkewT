@@ -1018,7 +1018,9 @@ fname = sprintf("%s%s/%s%s.nc", Directory,Project,Project,Flight)
 Data <- getNetCDF (fname, standardVariables(c("THETAP")))		
 r <- setRange (Data$Time, 123100, 125500)
 DS <- Data[r, c("PSXC", "ATX", "DPXC")]
-DP <- data.frame (P=XYplot (DS$ATX, DS$PSXC)$Y, ATX=XYplot (DS$ATX, DS$PSXC)$X, DPXC=XYplot(DS$DPXC, DS$PSXC)$X)
+DP <- data.frame (P=XYplot (DS$ATX, DS$PSXC)$Y, 
+                  ATX=XYplot (DS$ATX, DS$PSXC)$X, 
+                  DPXC=XYplot(DS$DPXC, DS$PSXC)$X)
 g <- g + geom_path (data=DP, aes(x=ATX, y=P, color='ATX'), lwd=1.5)
 g <- g + geom_path (data=DP, aes(x=DPXC, y=P, color='DPXC'), lwd=1.5)
 g <- g + theme(legend.position=c(0.2,0.85), legend.background=element_rect(fill="white"))
