@@ -3567,7 +3567,7 @@ XYP2$X[sq] <- NA      # this forces the flagged points to be skipped
 
 \begin_layout Plain Layout
 
-g <- ggplot (data=XYP, aes(x=X, y=Y)) + ylim(log10(pBot),log10(pTop))
+g <- ggplot (data=XYP, aes(x=X, y=Y)) + ylim (log10 (pBot), log10 (pTop))
 \end_layout
 
 \begin_layout Plain Layout
@@ -3587,12 +3587,12 @@ g <- g + theme(panel.background = element_rect(fill = bColor))
 
 \begin_layout Plain Layout
 
-g <- g + geom_path (data=XYP, aes(x=X, y=Y), color=pColor, lty=2)
+g <- g + geom_path (data=XYP, aes(x=X, y=Y), color=pColor, lty=2, na.rm=TRUE)
 \end_layout
 
 \begin_layout Plain Layout
 
-g <- g + geom_path (data=XYP2, aes(x=X, y=Y), color=pColor, lty=1)
+g <- g + geom_path (data=XYP2, aes(x=X, y=Y), color=pColor, lty=1, na.rm=TRUE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -3627,7 +3627,7 @@ g <- g + theme (axis.ticks = element_blank ())
 
 \begin_layout Plain Layout
 
-g <- g + theme (axis.title=element_text(face="plain",size=12,colour="blue"))
+g <- g + theme (axis.title=element_text (face="plain", size=12, colour="blue"))
 \end_layout
 
 \begin_layout Plain Layout
@@ -3637,18 +3637,18 @@ g <- g + theme (axis.title=element_text(face="plain",size=12,colour="blue"))
 
 \begin_layout Plain Layout
 
-border <- data.frame (X=c(0,0,NA,1,1), 
+border <- data.frame (X = c(0,0,NA,1,1), 
 \end_layout
 
 \begin_layout Plain Layout
 
-                      Y=c(log10(pBot),log10(pTop),log10(pBot),log10(pBot),log10(
-pTop)))
+            Y = c(log10(pBot), log10 (pTop), log10 (pBot), log10 (pBot),
+ log10 (pTop)))
 \end_layout
 
 \begin_layout Plain Layout
 
-g <- g + geom_path (data=border, color=pColor, lwd=plwd)
+g <- g + geom_path (data=border, color=pColor, lwd=plwd, na.rm=TRUE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -3734,7 +3734,7 @@ for (t in tLevels) {
 
 \begin_layout Plain Layout
 
-  if (XPt$X <= 0) {next}         # skip lines out of range
+  if (XPt$X < 0) {next}         # skip lines out of range
 \end_layout
 
 \begin_layout Plain Layout
@@ -3809,7 +3809,8 @@ DT2 <- DT
 
 \begin_layout Plain Layout
 
-g <- g + geom_path (data=DT, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=2)
+g <- g + geom_path (data=DT, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=2,
+ na.rm=TRUE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -3849,7 +3850,8 @@ DT2$X[sq] <- NA
 
 \begin_layout Plain Layout
 
-g <- g + geom_path (data=DT2, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=1)
+g <- g + geom_path (data=DT2, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=1,
+ na.rm=TRUE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -3932,8 +3934,13 @@ DLPLT3 <- DLPLT3[(DLPLT3$X > -1), ]
 
 \begin_layout Plain Layout
 
-g <- g + geom_text (data=DLPLT3, aes(x=X+1, y=log10(pTop), label=LABEL,
- angle=45, hjust=-0.2, vjust=0.2),
+DLPLT3["Y"] <- rep (log10 (pTop), length (DLPLT3$X))
+\end_layout
+
+\begin_layout Plain Layout
+
+g <- g + geom_text (data=DLPLT3, aes(x=X+1, y=Y, label=LABEL, angle=45,
+ hjust=-0.2, vjust=0.2),
 \end_layout
 
 \begin_layout Plain Layout
@@ -4112,7 +4119,7 @@ MRDF <- data.frame (X=xmr, Y=ymr)
 \begin_layout Plain Layout
 
 g <- g + geom_path (data=MRDF, aes(x=X, y=Y), color='darkgreen', lty=4,
- lwd=0.8)
+ lwd=0.8, na.rm=TRUE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -4197,7 +4204,7 @@ MRDFTH <- data.frame (X=xmth, Y=ymth)
 \begin_layout Plain Layout
 
 g <- g + geom_path (data=MRDFTH, aes(x=X, y=Y), color='darkorange', lty=1,
- lwd=0.4)
+ lwd=0.4, na.rm=TRUE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -4320,7 +4327,8 @@ MRDFI <- data.frame (X=xmI, Y=ymI)
 
 \begin_layout Plain Layout
 
-g <- g + geom_path (data=MRDFI, aes(x=X, y=Y), color='red', lty=1, lwd=0.4)
+g <- g + geom_path (data=MRDFI, aes(x=X, y=Y), color='red', lty=1, lwd=0.4,
+ na.rm=TRUE)
 \end_layout
 
 \begin_layout Plain Layout
@@ -4339,7 +4347,7 @@ skewTDiagram <- g
 
 \begin_layout Plain Layout
 
-save(skewTDiagram, file="./skewTDiagram.Rdata")
+save(skewTDiagram, pBot, pTop, tBot, tTop, file="./skewTDiagram.Rdata")
 \end_layout
 
 \begin_layout Plain Layout
@@ -4441,12 +4449,12 @@ DP <- data.frame (P=XYplot (DS$ATX, DS$PSXC)$Y, ATX=XYplot (DS$ATX, DS$PSXC)$X,
 
 \begin_layout Plain Layout
 
-g <- g + geom_path (data=DP, aes(x=ATX, y=P, color='ATX'), lwd=1.5)
+g <- g + geom_path (data=DP, aes(x=ATX, y=P, color='ATX'), lwd=1.5, na.rm=TRUE)
 \end_layout
 
 \begin_layout Plain Layout
 
-g <- g + geom_path (data=DP, aes(x=DPXC, y=P, color='DPXC'), lwd=1.5)
+g <- g + geom_path (data=DP, aes(x=DPXC, y=P, color='DPXC'), lwd=1.5, na.rm=TRUE)
 \end_layout
 
 \begin_layout Plain Layout
