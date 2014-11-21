@@ -367,7 +367,15 @@ target "https://www.ncl.ucar.edu/Applications/skewt.shtml"
 ) provides a skew-T diagram based on the USAF diagram (form dod-wpc 9-16-1)
  but this dates back to the 1970s and so probably uses the Rossby form for
  equivalent potential temperature.
- 
+ Another source of standard USAF DOD diagrams is 
+\begin_inset CommandInset href
+LatexCommand href
+name "Weather Graphics"
+target "http://www.weathergraphics.com/reference/"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -2028,7 +2036,142 @@ reference "eq:dTdp"
  labeled by their value equivalent to potential temperature after all water
  is condensed).
  Here the former is chosen.
- The integration is performed using the following R code:
+ The integration is performed using the R code that follows.
+\end_layout
+
+\begin_layout Standard
+Another option is to construct the pseudoadiabatc using one of several alternate
+ forms of the equation for pseudo-adiabatic equivalent potential temperature.
+ They alternatives (for all of which values are generated below) are:
+\end_layout
+
+\begin_layout Enumerate
+The Rossby equation:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\begin{equation}
+\Theta_{e}^{(Rossby)}=T_{k}\left(\frac{1000}{p-e}\right)^{R_{d}/c_{pd}}e^{L_{v}r/(c_{pd}T_{k}}\label{eq:RossbyEq}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $T_{k}$
+\end_inset
+
+ is the temperature in kelvin, 
+\begin_inset Formula $p$
+\end_inset
+
+ the total pressure, 
+\begin_inset Formula $e$
+\end_inset
+
+ the vapor pressure, 
+\begin_inset Formula $R_{d}$
+\end_inset
+
+ the dry-air specific heat, 
+\begin_inset Formula $c_{pd}$
+\end_inset
+
+ the specific heat of dry air, 
+\begin_inset Formula $L_{v}$
+\end_inset
+
+ the latent heat of vaporization, and 
+\begin_inset Formula $r$
+\end_inset
+
+ the water vapor mixing ratio.
+\end_layout
+
+\begin_layout Enumerate
+The Bolton equation:
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+David Bolton, 1980: The Computation of Equivalent Potential Temperature.
+ Mon.
+ Wea.
+ Rev., 108, 1046–1053.
+ doi: http://dx.doi.org/10.1175/1520-0493(1980)108<1046:TCOEPT>2.0.CO;2 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\begin{equation}
+\Theta_{e}^{(Bolton)}=T_{k}\left(\frac{1000}{p}\right)^{0.2854(1-0.28\times10^{-3}r)}\exp\left[\left(\frac{3.376}{T_{L}}-0.00254\right)r(1+0.81\times10^{-3}r\right]\label{eq:BoltonEq}
+\end{equation}
+
+\end_inset
+
+where 
+\begin_inset Formula $T_{L}$
+\end_inset
+
+ is the temperature at the lifted condensation level (which for the purpose
+ of calculating pseudoadiabats can be set to 
+\begin_inset Formula $T_{k}$
+\end_inset
+
+; for other purposes, see Eq.
+\begin_inset space ~
+\end_inset
+
+21 of Bolton 1980) and other symbols are as for the Rossby equation.
+\end_layout
+
+\begin_layout Enumerate
+The Davies-Jones formula:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\begin{equation}
+\Theta_{p}=T_{k}\left(\frac{1000}{p-e}\right)^{0.2854(T_{k}/T_{L})^{0.28\times10^{-3}r}}\exp\frac{L_{v}^{*}r}{c_{pd}T_{L}}\label{eq:DaviesJonesEq}
+\end{equation}
+
+\end_inset
+
+where the latent heat 
+\begin_inset Formula $L_{v}^{*}=2.56313\times10^{6}-1754(T_{L}-T_{0})+1.137\times10^{6}r$
+\end_inset
+
+ (with 
+\begin_inset Formula $T_{0}=273.15\thinspace$
+\end_inset
+
+K) is adjusted by fits to integration results and so differs from the true
+ values of latent heat of vaporization.
+ For the purpose of determining pseudoadiabats, 
+\begin_inset Formula $T_{L}$
+\end_inset
+
+ can be set equal to 
+\begin_inset Formula $T_{k}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The procedure used here is to calculate each of these, along with the direct-int
+egration result, and save the results in a table with high pressure resolution
+ (5 mb).
+ That table then can be used to construct a thermodynamic diagram without
+ repeating all the calculations.
 \end_layout
 
 \begin_layout Standard
