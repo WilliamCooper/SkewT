@@ -1,10 +1,7 @@
 require(Ranadu)
 require(ggplot2)
 library(scales)
-XYplot <- function (.T, .p) { 
-  return (data.frame(X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop), 
-                     Y=log10(.p)))
-}
+
 load ("./SkewTData.Rdata")
 
 ####
@@ -25,15 +22,19 @@ tColor <- 'darkblue'
 tlwd=0.4
 
 pBot <- 1000
-pTop <- 100
-tBot <- -40
+pTop <- 300    ## 100 for GV
+tBot <- -20    ## -40 for GV
 tTop <- 40
-tMin <- -140
+tMin <- -120   ## -140 for GV
 pLevels <- seq (pBot, pTop, by=-50)
 tLevels <- seq (tMin, tTop, by=5)
 ####
 ##   end of changeable plot characteristics
 ####
+XYplot <- function (.T, .p) { 
+  return (data.frame(X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop), 
+                     Y=log10(.p)))
+}
 
 XP <- vector()
 YP <- vector()
@@ -51,7 +52,7 @@ while (4+6*j+1 <= length (XYP2$X)) {
   j <- j + 1
 }
 XYP2$X[sq] <- NA
-g <- ggplot (data=XYP, aes(x=X, y=Y)) +ylim(3,2)
+g <- ggplot (data=XYP, aes(x=X, y=Y)) +ylim (log10(pBot), log10(pTop))
 g <- g + theme(panel.background = element_rect(fill = bColor))
 g <- g + geom_path (data=XYP, aes(x=X, y=Y), color=pColor, lty=2)
 g <- g + geom_path (data=XYP2, aes(x=X, y=Y), color=pColor, lty=1)
@@ -76,20 +77,21 @@ DLPLS <- data.frame (X=rep(-0.025, LPLS), Y=log10(pls), LABEL=labl)
 g <- g + geom_text (data=DLPLS, aes(x=X, y=Y, label=LABEL), size=4)
 xt <- vector ()
 yt <- vector ()
+YR <- log10 (pBot/pTop)
 for (t in tLevels) {
   XPb <- XYplot (t, pBot)
   XPt <- XYplot (t, pTop)
   if (XPt$X <+ 0) {next}
   if (XPb$X >= 1) {next}
   if (XPb$X < 0) {
-    XPb$Y <- XPb$Y+XPb$X
+    XPb$Y <- XPb$Y+XPb$X * YR
     XPb$X <- 0
   }
   if (XPt$X > 1) {
-    XPt$Y <- XPt$Y+XPt$X-1
+    XPt$Y <- XPt$Y+(XPt$X-1) * YR
     XPt$X <- 1
   }
-  xt <- c(xt, c(XPb$X, XPt$X,NA))
+  xt <- c(xt, c(XPb$X, XPt$X, NA))
   yt <- c(yt, c(XPb$Y, XPt$Y, NA))
 }
 DT <- data.frame (X = xt, Y = yt)
@@ -114,11 +116,11 @@ DLPLT <- data.frame(X=XYplot (pltt, pBot)$X, Y=rep(log10(pBot), LPLT), LABEL=lab
 DLPLT2 <- DLPLT [DLPLT$X > 0, ]
 g <- g + geom_text (data=DLPLT2, aes(x=X, y=Y, label=LABEL, angle=45, hjust=1.5, vjust=0.5),
                     size=4)
-g <- g + geom_text (data=DLPLT2, aes(x=1.02, y=Y-1+X, label=LABEL, angle=45, hjust=-0.3, vjust=-0.0),
+g <- g + geom_text (data=DLPLT2, aes(x=1.02, y=Y-(1-X)*YR, label=LABEL, angle=45, hjust=-0.3, vjust=-0.0),
                     size=3.5)
 DLPLT3 <- DLPLT[DLPLT$X <= 0, ]
 DLPLT3 <- DLPLT3[DLPLT3$X > -1, ]
-g <- g + geom_text (data=DLPLT3, aes(x=X+1, y=2, label=LABEL, angle=45, hjust=-0.2, vjust=0.2),
+g <- g + geom_text (data=DLPLT3, aes(x=X+1, y=log10(pTop), label=LABEL, angle=45, hjust=-0.2, vjust=0.2),
                     size=3.5)
 ## add variables from SkewTData:
 SkewTData$P[SkewTData$P > pBot] <- NA
