@@ -906,13 +906,15 @@ for (i in 1:LPLT) {lablt <- c(lablt, sprintf("%d", pltt[i]))}
 lablt[lablt=="0"] <- "0  "         # move the 0 to look better
 DLPLT <- data.frame (X=XYplot (pltt, pBot)$X, Y=rep(log10(pBot), LPLT), LABEL=lablt)
 DLPLT2 <- DLPLT [(DLPLT$X > 0), ]
+DLPLT2$Y2 <- DLPLT2$Y - (1-DLPLT2$X) * YR
 g <- g + geom_text (data=DLPLT2, aes(x=X, y=Y, label=LABEL, angle=45, hjust=1.5, vjust=0.5),
                     size=4)
-g <- g + geom_text (data=DLPLT2, aes(x=1.02, y=Y-(1-X) * YR, label=LABEL, angle=45, hjust=-0.3, vjust=-0.0),
+g <- g + geom_text (data=DLPLT2, aes(x=1.02, y=Y2, label=LABEL, angle=45, hjust=-0.3, vjust=-0.0),
                     size=3.5)
 DLPLT3 <- DLPLT[(DLPLT$X <= 0), ]
 DLPLT3 <- DLPLT3[(DLPLT3$X > -1), ]
-g <- g + geom_text (data=DLPLT3, aes(x=X+1, y=log10(pTop), label=LABEL, angle=45, hjust=-0.2, vjust=0.2),
+DLPLT3$Y2 <- rep (log10(pTop), length (DLPLT3$X))
+g <- g + geom_text (data=DLPLT3, aes(x=X+1, y=Y2, label=LABEL, angle=45, hjust=-0.2, vjust=0.2),
                     size=3.5)
 
 ## add variables from SkewTData:
@@ -994,7 +996,7 @@ g <- g + geom_path (data=MRDFI, aes(x=X, y=Y), color='red', lty=1, lwd=0.4)
 
 ## save the diagram for other uses
 skewTDiagram <- g
-save(skewTDiagram, tBot, tTop, pBot, pTop, file="./skewTDiagramC130.Rdata")
+save(skewTDiagram, file="./skewTDiagramC130.Rdata")
 
 @
 
