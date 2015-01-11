@@ -996,7 +996,8 @@ g <- g + geom_path (data=MRDFI, aes(x=X, y=Y), color='red', lty=1, lwd=0.4)
 
 ## save the diagram for other uses
 skewTDiagram <- g
-save(skewTDiagram, file="./skewTDiagramC130.Rdata")
+# need pBot etc as reference for plotting an aircraft sounding relative to this background
+save(pBot, pTop, tBot, tTop, skewTDiagram, file="./skewTDiagramC130.Rdata")
 
 @
 
@@ -1054,7 +1055,7 @@ Reproducibility:
 \textsf{\textsc{\textcolor{blue}{Git:}}} & git@github.com:WilliamCooper/\Sexpr{thisFileName}.git\tabularnewline
 \end{tabular}
 
-\attachm{\Sexpr{thisFileName}.Rnw\\\Sexpr{thisFileName}.pdf\\skewTDiagram.Rdata\\SessionInfo}
+\attachm{\Sexpr{thisFileName}.Rnw\\\Sexpr{thisFileName}.pdf\\skewTDiagramC130.Rdata\\SessionInfo}
 %\cc{first attachment\\second\\3rd att}
 %\attach{attachment}
 %\attachm{first\\second} %\cc{first attachment\\second\\3rd att}
@@ -1063,7 +1064,7 @@ cat (toLatex(sessionInfo()), file="SessionInfo")
 
 @ 
 <<make-zip-archive, echo=TRUE, INCLUDE=TRUE>>=
-system (sprintf("zip %s.zip %s.Rnw %s.pdf skewTDiagram.Rdata SessionInfo", thisFileName, thisFileName, thisFileName))
+system (sprintf("zip %s.zip %s.Rnw %s.pdf skewTDiagramC130.Rdata SessionInfo", thisFileName, thisFileName, thisFileName))
 
 @ 
 
