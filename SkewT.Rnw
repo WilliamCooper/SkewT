@@ -771,10 +771,13 @@ tColor <- 'darkblue'        # temperature lines
 tlwd=0.4                    # line width for temperature lines
 
 pBot <- 1000                # range in pressure and temperature for the plot
-pTop <- 100
+pTop <- 100                 # (for GV)
 tBot <- -40
-tTop <- 40
 tMin <- -140                # needed to cover isotherms in top-left of plot
+pTop <- 300                 # (for C-130)
+tBot <- -20
+tMin <- -120
+tTop <- 40                  # both
 pLevels <- seq (pBot, pTop, by=-50)    # lines to plot for pressure
 tLevels <- seq (tMin, tTop, by=5)      # lines to plot for temperature
 ####
@@ -821,7 +824,7 @@ XP <- vector()
 YP <- vector()
 for (p in pLevels) {  # in general, this is poor, a very slow method in R. But ...
   lp <- log10(p)
-  XP <- c(XP, c(0,1,NA))
+  XP <- c(XP, c(0, 1, NA))
   YP <- c(YP, lp, lp, 0)
 }
 XYP <- data.frame (X=XP, Y=YP)
@@ -836,7 +839,7 @@ while (4+6*j+1 <= length (XYP2$X)) {
 XYP2$X[sq] <- NA      # this forces the flagged points to be skipped
 
 # Define g to hold the plot definition and the pressure lines
-g <- ggplot (data=XYP, aes(x=X, y=Y)) + ylim(log10(pBot),log10(pTop))
+g <- ggplot (data=XYP, aes(x=X, y=Y)) + ylim(log10(pBot), log10(pTop))
          # set a background color
 g <- g + theme(panel.background = element_rect(fill = bColor))
          # plot the pressure lines, first dashed, then solid
@@ -866,17 +869,18 @@ g <- g + geom_text (data=DLPLS, aes(x=X, y=Y, label=LABEL), size=4)
          # draw the isotherms
 xt <- vector ()
 yt <- vector ()
+YR <- log10 (pBot/pTop)
 for (t in tLevels) {
   XPb <- XYplot (t, pBot)        # (x,y) at bottom axis
   XPt <- XYplot (t, pTop)        # (x,y) at top axis
   if (XPt$X <= 0) {next}         # skip lines out of range
   if (XPb$X >= 1) {next}
   if (XPb$X < 0) {               # truncate lines to stay within plot area
-    XPb$Y <- XPb$Y+XPb$X
+    XPb$Y <- XPb$Y+XPb$X * YR
     XPb$X <- 0
   }
   if (XPt$X > 1) {
-    XPt$Y <- XPt$Y + XPt$X - 1
+    XPt$Y <- XPt$Y + (XPt$X - 1) * YR
     XPt$X <- 1
   }
   xt <- c(xt, c(XPb$X, XPt$X, NA))
@@ -904,7 +908,7 @@ DLPLT <- data.frame (X=XYplot (pltt, pBot)$X, Y=rep(log10(pBot), LPLT), LABEL=la
 DLPLT2 <- DLPLT [(DLPLT$X > 0), ]
 g <- g + geom_text (data=DLPLT2, aes(x=X, y=Y, label=LABEL, angle=45, hjust=1.5, vjust=0.5),
                     size=4)
-g <- g + geom_text (data=DLPLT2, aes(x=1.02, y=Y-1+X, label=LABEL, angle=45, hjust=-0.3, vjust=-0.0),
+g <- g + geom_text (data=DLPLT2, aes(x=1.02, y=Y-(1-X) * YR, label=LABEL, angle=45, hjust=-0.3, vjust=-0.0),
                     size=3.5)
 DLPLT3 <- DLPLT[(DLPLT$X <= 0), ]
 DLPLT3 <- DLPLT3[(DLPLT3$X > -1), ]
@@ -990,7 +994,7 @@ g <- g + geom_path (data=MRDFI, aes(x=X, y=Y), color='red', lty=1, lwd=0.4)
 
 ## save the diagram for other uses
 skewTDiagram <- g
-save(skewTDiagram, file="./skewTDiagram.Rdata")
+save(skewTDiagram, file="./skewTDiagramC130.Rdata")
 
 @
 
