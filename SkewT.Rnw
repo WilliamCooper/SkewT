@@ -843,8 +843,8 @@ g <- ggplot (data=XYP, aes(x=X, y=Y)) + ylim(log10(pBot), log10(pTop))
          # set a background color
 g <- g + theme(panel.background = element_rect(fill = bColor))
          # plot the pressure lines, first dashed, then solid
-g <- g + geom_path (data=XYP, aes(x=X, y=Y), color=pColor, lty=2)
-g <- g + geom_path (data=XYP2, aes(x=X, y=Y), color=pColor, lty=1)
+g <- g + geom_path (data=XYP, aes(x=X, y=Y), color=pColor, lty=2, na.rm=TRUE)
+g <- g + geom_path (data=XYP2, aes(x=X, y=Y), color=pColor, lty=1, na.rm=TRUE)
          # suppress auto grid lines and axis labels and ticks
 g <- g + theme(panel.grid.major = element_blank())
 g <- g + theme(panel.grid.minor = element_blank())
@@ -855,7 +855,7 @@ g <- g + theme (axis.title=element_text(face="plain",size=12,colour="blue"))
          # add a border to complete the box around the plot
 border <- data.frame (X=c(0,0,NA,1,1), 
                       Y=c(log10(pBot),log10(pTop),log10(pBot),log10(pBot),log10(pTop)))
-g <- g + geom_path (data=border, color=pColor, lwd=plwd)
+g <- g + geom_path (data=border, color=pColor, lwd=plwd, na.rm=TRUE)
         # write the axis labels
 g <- g + xlab (expression (paste("Temperature or dew point [",degree,"C]")))
 g <- g + ylab ("Pressure [hPa]")
@@ -888,7 +888,7 @@ for (t in tLevels) {
 }
 DT <- data.frame (X = xt, Y = yt)
 DT2 <- DT
-g <- g + geom_path (data=DT, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=2)
+g <- g + geom_path (data=DT, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=2, na.rm=TRUE)
 sq <- 4:5
 j <- 1
 while (4+6*j+1 <= length(DT2$X)) {
@@ -896,7 +896,7 @@ while (4+6*j+1 <= length(DT2$X)) {
   j <- j + 1
 }
 DT2$X[sq] <- NA
-g <- g + geom_path (data=DT2, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=1)
+g <- g + geom_path (data=DT2, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=1, na.rm=TRUE)
 
 ## add text for temperature, labeling every other line
 pltt <- seq (tLevels[3], tLevels[length(tLevels)-2], by=2*(tLevels[2]-tLevels[1]))
@@ -950,7 +950,8 @@ for (name in names(SkewTData)) {
   }
 }
 MRDF <- data.frame (X=xmr, Y=ymr)
-g <- g + geom_path (data=MRDF, aes(x=X, y=Y), color='darkgreen', lty=4, lwd=0.8)
+g <- g + geom_path (data=MRDF, aes(x=X, y=Y), color='darkgreen', lty=4, 
+                    lwd=0.8, na.rm=TRUE)
 
          # potential temperature lines
 xmth <- vector ()
@@ -967,7 +968,8 @@ for (name in names(SkewTData)) {
   }
 }
 MRDFTH <- data.frame (X=xmth, Y=ymth)
-g <- g + geom_path (data=MRDFTH, aes(x=X, y=Y), color='darkorange', lty=1, lwd=0.4)
+g <- g + geom_path (data=MRDFTH, aes(x=X, y=Y), color='darkorange', lty=1, 
+                    lwd=0.4, na.rm=TRUE)
 
          # equivalent potential temperature: have several to choose from:
          #   I  results from integration
@@ -992,7 +994,8 @@ for (name in names(SkewTData)) {
   }
 }
 MRDFI <- data.frame (X=xmI, Y=ymI)
-g <- g + geom_path (data=MRDFI, aes(x=X, y=Y), color='red', lty=1, lwd=0.4)
+g <- g + geom_path (data=MRDFI, aes(x=X, y=Y), color='red', lty=1, 
+                    lwd=0.4, na.rm=TRUE)
 
 ## save the diagram for other uses
 skewTDiagram <- g
@@ -1028,8 +1031,8 @@ DS <- Data[r, c("PSXC", "ATX", "DPXC")]
 DP <- data.frame (P=XYplot (DS$ATX, DS$PSXC)$Y, 
                   ATX=XYplot (DS$ATX, DS$PSXC)$X, 
                   DPXC=XYplot(DS$DPXC, DS$PSXC)$X)
-g <- g + geom_path (data=DP, aes(x=ATX, y=P, color='ATX'), lwd=1.5)
-g <- g + geom_path (data=DP, aes(x=DPXC, y=P, color='DPXC'), lwd=1.5)
+g <- g + geom_path (data=DP, aes(x=ATX, y=P, color='ATX'), lwd=1.5, na.rm=TRUE)
+g <- g + geom_path (data=DP, aes(x=DPXC, y=P, color='DPXC'), lwd=1.5, na.rm=TRUE)
 g <- g + theme(legend.position=c(0.2,0.85), legend.background=element_rect(fill="white"))
 g <- g + labs(color='Measurement')
 g <- g + scale_colour_manual(name = "Measurement",values = c('black', 'darkgreen'))
