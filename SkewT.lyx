@@ -1,7 +1,9 @@
-#LyX 2.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 474
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass article
 \begin_preamble
 \input colordvi
@@ -50,16 +52,18 @@ knitr
 \language_package default
 \inputencoding default
 \fontencoding global
-\font_roman times
-\font_sans default
-\font_typewriter default
-\font_math auto
+\font_roman "times" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -89,6 +93,7 @@ knitr
 \suppress_date false
 \justification true
 \use_refstyle 0
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
@@ -104,7 +109,10 @@ knitr
 \tocdepth 2
 \paragraph_separation skip
 \defskip medskip
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle fancy
@@ -149,7 +157,7 @@ addressee={Ranadu documentation}  % >>change "File" to the "To:" name desired
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="0pt">
 <column alignment="left" valignment="top" width="0pt">
 <row>
@@ -339,14 +347,18 @@ Introduction and goal
 
 \begin_layout Standard
 The skew-T diagram (formally, the Skew-T log-P diagram) and related thermodynami
-c diagrams (tephigram, emagram, pastagram, aerogram, Stüve diagram) are
- standard tools for analysis of stability in the atmosphere.
+c diagrams (tephigram, emagram, pastagram, aerogram, St
+\begin_inset Formula $\ddot{\mathrm{u}}$
+\end_inset
+
+ve diagram) are standard tools for analysis of stability in the atmosphere.
  There are many versions of this diagram available.
  A fairly recent and very well documented source is 
 \begin_inset CommandInset href
 LatexCommand href
 name "this URL"
 target "http://bretwhissel.net/skewt/"
+literal "false"
 
 \end_inset
 
@@ -361,6 +373,7 @@ target "http://bretwhissel.net/skewt/"
 LatexCommand href
 name "this link"
 target "https://www.ncl.ucar.edu/Applications/skewt.shtml"
+literal "false"
 
 \end_inset
 
@@ -372,6 +385,7 @@ target "https://www.ncl.ucar.edu/Applications/skewt.shtml"
 LatexCommand href
 name "Weather Graphics"
 target "http://www.weathergraphics.com/reference/"
+literal "false"
 
 \end_inset
 
@@ -442,7 +456,7 @@ ally at 45
 
  slope with respect to both the abscissa and ordinate.
  This leads to an abscissa coordinate that is a function of both temperature
- and pressure and is expressed as a value in the range 0--1 (the plot limits):
+ and pressure and is expressed as a value in the range 0–1 (the plot limits):
 \end_layout
 
 \begin_layout Standard
@@ -470,11 +484,11 @@ where
 \end_inset
 
 C] and pressure [hPa] and {
-\begin_inset Formula $T_{l},\, T_{h}$
+\begin_inset Formula $T_{l},\,T_{h}$
 \end_inset
 
 } and {
-\begin_inset Formula $p_{l},\, p_{h}$
+\begin_inset Formula $p_{l},\,p_{h}$
 \end_inset
 
 } are the respective lower and upper limits for temperature along the abscissa
@@ -586,7 +600,7 @@ The structure for the data.frame is as follows:
 \size small
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -1033,7 +1047,7 @@ ThetaIM60 to ThetaI50
 
 \begin_layout Standard
 The pressure variable determines the number of rows for each of the other
- variables, so for example each of multiple columns for Theta have the same
+ variables, so for example each of multiple columns for Theta has the same
  length as the pressure variable.
  However, there are 300/5+1=61 Theta rows representing individual values
  of Theta vs pressure, so for example there is a row of values for Theta=
@@ -1152,6 +1166,7 @@ where quantities with subscript
 LatexCommand href
 name " ProcessingAlgorithms.pdf"
 target "https://drive.google.com/file/d/0B1kIUH45ca5Ab2Z6cld1M1cydjA/view?usp=sharing"
+literal "false"
 
 \end_inset
 
@@ -1166,6 +1181,10 @@ status open
 \begin_layout Plain Layout
 
 <<basic-lines, eval=FALSE, echo=TRUE, include=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -1315,6 +1334,10 @@ for (theta in seq (TZERO - 100, TZERO + 200, by=5)) {
 
 \begin_layout Plain Layout
 
+\end_layout
+
+\begin_layout Plain Layout
+
 @
 \end_layout
 
@@ -1422,6 +1445,10 @@ status open
 
 \begin_layout Plain Layout
 
+\end_layout
+
+\begin_layout Plain Layout
+
 # note: this omits the enhancement factor, as is conventional def.
  of eq.
  vapor pressure
@@ -1440,6 +1467,10 @@ TfromRmix <- function (.T, .rMix, .P) {
 \begin_layout Plain Layout
 
 }
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -1465,6 +1496,10 @@ status open
 \begin_layout Plain Layout
 
 <<mixing-ratio-lines, eval=FALSE, echo=TRUE, include=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -1510,6 +1545,10 @@ for (rmix in rMix) {
 \begin_layout Plain Layout
 
 }
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -1832,7 +1871,7 @@ and Kirchhoff's equation (cf., e.g., Emanuel 1994, Eq.
 \begin_layout Standard
 \begin_inset Formula 
 \begin{equation}
-dL_{V}=(c_{pv}-c_{w})\, dT\,\,.\label{eq:Kirchhoff}
+dL_{V}=(c_{pv}-c_{w})\,dT\,\,.\label{eq:Kirchhoff}
 \end{equation}
 
 \end_inset
@@ -1897,7 +1936,7 @@ rR_{w}\frac{de_{s}}{e_{s}}=rR_{w}\frac{L_{vdT}}{R_{w}T^{2}}=\frac{L_{v}r}{T}\fra
 \begin_layout Standard
 \begin_inset Formula 
 \[
-d\left(\frac{L_{v}r}{T}\right)=\left(\frac{\partial\left(\frac{L_{v}r}{T}\right)}{\partial T}\right)_{p_{d}}dT+\left(\frac{\partial\left(\frac{L_{v}r}{T}\right)}{\partial p_{d}}\right)_{T}dp_{d}=\frac{\epsilon T\, d\left(\frac{L_{v}e_{s}(T)}{T}\right)}{p_{d}dT}\frac{dT}{T}-\frac{L_{v}r}{T}\frac{dp_{d}}{p_{d}}
+d\left(\frac{L_{v}r}{T}\right)=\left(\frac{\partial\left(\frac{L_{v}r}{T}\right)}{\partial T}\right)_{p_{d}}dT+\left(\frac{\partial\left(\frac{L_{v}r}{T}\right)}{\partial p_{d}}\right)_{T}dp_{d}=\frac{\epsilon T\,d\left(\frac{L_{v}e_{s}(T)}{T}\right)}{p_{d}dT}\frac{dT}{T}-\frac{L_{v}r}{T}\frac{dp_{d}}{p_{d}}
 \]
 
 \end_inset
@@ -2181,6 +2220,10 @@ status open
 \begin_layout Plain Layout
 
 <<integration-step, echo=TRUE, include=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -2704,6 +2747,10 @@ IntegrationStep <- function (tc, pd1, pd2, rtot, aflag) {
 
 \begin_layout Plain Layout
 
+\end_layout
+
+\begin_layout Plain Layout
+
 @
 \end_layout
 
@@ -2719,6 +2766,10 @@ status open
 \begin_layout Plain Layout
 
 <<THETA-P, echo=TRUE, include=TRUE, echo=-2, fig.height=6, warning=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -3310,6 +3361,10 @@ status open
 
 \begin_layout Plain Layout
 
+\end_layout
+
+\begin_layout Plain Layout
+
 ####
 \end_layout
 
@@ -3414,7 +3469,7 @@ pBot <- 1000                # range in pressure and temperature for the
 
 \begin_layout Plain Layout
 
-pTop <- 100
+pTop <- 50                  # normally 100
 \end_layout
 
 \begin_layout Plain Layout
@@ -3459,6 +3514,10 @@ tLevels <- seq (tMin, tTop, by=5)      # lines to plot for temperature
 
 \begin_layout Plain Layout
 
+\end_layout
+
+\begin_layout Plain Layout
+
 @
 \end_layout
 
@@ -3474,6 +3533,10 @@ status open
 \begin_layout Plain Layout
 
 <<ggplot-call-and-first-layers, echo=TRUE, include=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -3537,6 +3600,10 @@ load ("./SkewTData.Rdata")
 
 \begin_layout Plain Layout
 
+\end_layout
+
+\begin_layout Plain Layout
+
 @
 \end_layout
 
@@ -3568,6 +3635,10 @@ status open
 
 \begin_layout Plain Layout
 
+\end_layout
+
+\begin_layout Plain Layout
+
 XYplot <- function (.T, .p) {    
 \end_layout
 
@@ -3580,6 +3651,10 @@ XYplot <- function (.T, .p) {
 \begin_layout Plain Layout
 
 }
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -3604,6 +3679,10 @@ status open
 \begin_layout Plain Layout
 
 <<ggplot-construction, echo=TRUE, include=TRUE, warning=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
 \end_layout
 
 \begin_layout Plain Layout
@@ -4536,6 +4615,10 @@ status open
 
 \begin_layout Plain Layout
 
+\end_layout
+
+\begin_layout Plain Layout
+
 ## plot a sample sounding
 \end_layout
 
@@ -4619,10 +4702,6 @@ g <- g + scale_colour_manual(name = "Measurement",values = c('black', 'darkgreen
 
 \begin_layout Plain Layout
 
-\end_layout
-
-\begin_layout Plain Layout
-
 print(g)
 \end_layout
 
@@ -4638,6 +4717,10 @@ print(g)
 \end_inset
 
 
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4645,7 +4728,7 @@ print(g)
 
 \family sans
 \color blue
--- End of Memo --
+– End of Memo –
 \end_layout
 
 \begin_layout Standard
@@ -4686,7 +4769,7 @@ include enough info to re-run.
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="0pt">
 <column alignment="left" valignment="top" width="0pt">
 <row>

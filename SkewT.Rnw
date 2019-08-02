@@ -1,6 +1,6 @@
-%% LyX 2.1.2 created this file.  For more info, see http://www.lyx.org/.
+%% LyX 2.3.2 created this file.  For more info, see http://www.lyx.org/.
 %% Do not edit unless you really know what you are doing.
-\documentclass[12pt]{article}
+\documentclass[12pt,english]{article}
 \usepackage{mathptmx}
 \usepackage[T1]{fontenc}
 \usepackage[letterpaper]{geometry}
@@ -12,9 +12,9 @@
 \setlength{\parskip}{\medskipamount}
 \setlength{\parindent}{0pt}
 \usepackage{color}
+\usepackage{babel}
 \usepackage[unicode=true]
  {hyperref}
-\usepackage{breakurl}
 
 \makeatletter
 
@@ -97,6 +97,7 @@ thisFileName <- "SkewT"
 require(Ranadu, quietly = TRUE, warn.conflicts=FALSE)
 require (nleqslv, quietly = TRUE, warn.conflicts=FALSE)
 library(knitr)
+library(tidyverse)
 opts_chunk$set (echo=FALSE, include=FALSE, fig.lp="fig:", size='footnotesize')
 opts_chunk$set (fig.width=6, fig.height=6, fig.pos="center", digits=4)
 opts_chunk$set (warnings=FALSE, strip.white=TRUE)
@@ -105,11 +106,10 @@ TZERO <- StandardConstant ("Tzero")
 
 @
 
-
 \section{Introduction and goal}
 
 The skew-T diagram (formally, the Skew-T log-P diagram) and related
-thermodynamic diagrams (tephigram, emagram, pastagram, aerogram, St?ve
+thermodynamic diagrams (tephigram, emagram, pastagram, aerogram, St$\ddot{\mathrm{u}}$ve
 diagram) are standard tools for analysis of stability in the atmosphere.
 There are many versions of this diagram available. A fairly recent
 and very well documented source is \href{http://bretwhissel.net/skewt/}{this URL},
@@ -121,32 +121,31 @@ and I haven't yet learned the details of how it currently is generated.
 NCL (see \href{https://www.ncl.ucar.edu/Applications/skewt.shtml}{this link})
 provides a skew-T diagram based on the USAF diagram (form dod-wpc
 9-16-1) but this dates back to the 1970s and so probably uses the
-Rossby form for equivalent potential temperature. 
+Rossby form for equivalent potential temperature. Another source of
+standard USAF DOD diagrams is \href{http://www.weathergraphics.com/reference/}{Weather Graphics}.
 
 There have been two recent developments that have potential influences
 on the pseudo-adiabats in the skew-T diagram. First, Davies-Jones
 (Davies-Jones, R., 2009: On formulas for equivalent potential temperature.
-Mon. Wea. Review, 137, 3137\textendash{} 3148) developed an improved
-representation for the pseudoadiabatic equivalent potential temperature,
-taking into account factors like the variation of the latent heat
-of vaporization with temperature and making other adjustments. Second,
-Murphy and Koop (Q.~J.~R.~Meteorol.~Soc.~(2005), 131, pp. 1539\textendash 1565)
-developed an improved representation of the equilibrium water vapor
-pressure as a function of temperature. So far as I have been able
-to find, these advances have not been incorporated into thermodynamic
-diagrams that are readily available. Furthermore, any definition of
-pseudo-adiabatic equivalent potential temperature will likely involve
-approximations because the specific heat and latent heat of vaporization
-of water vary with temperature, and the former has not been included
-even in the Davies-Jones formula. For that reason, the goal here is
-to construct new diagrams based on those two advances. For the pseudo-adiabatics,
+Mon. Wea. Review, 137, 3137-- 3148) developed an improved representation
+for the pseudoadiabatic equivalent potential temperature, taking into
+account factors like the variation of the latent heat of vaporization
+with temperature and making other adjustments. Second, Murphy and
+Koop (Q.~J.~R.~Meteorol.~Soc.~(2005), 131, pp. 1539--1565) developed
+an improved representation of the equilibrium water vapor pressure
+as a function of temperature. So far as I have been able to find,
+these advances have not been incorporated into thermodynamic diagrams
+that are readily available. Furthermore, any definition of pseudo-adiabatic
+equivalent potential temperature will likely involve approximations
+because the specific heat and latent heat of vaporization of water
+vary with temperature, and the former has not been included even in
+the Davies-Jones formula. For that reason, the goal here is to construct
+new diagrams based on those two advances. For the pseudo-adiabatics,
 the calculation will be based on direct integration of the differential
 equation representing constant entropy, as discussed in a 2011 memo
 referenced from the document ProcessingAlgorithms.pdf.
 
-
 \section{The basic equations and general approach}
-
 
 \subsection{The coordinate transformation}
 
@@ -161,24 +160,24 @@ value in the range 0--1 (the plot limits):
 x=\frac{T-T_{l}}{T_{h}-T_{l}}-\frac{\log_{10}(p/p_{l})}{\log_{10}(p_{l}/p_{h})}\label{eq:x-coordinate}
 \end{equation}
 
-
 where $T$ and $p$ are the respective temperature {[}$^{\circ}$C{]}
-and pressure {[}hPa{]} and \{$T_{l},\, T_{h}$\} and \{$p_{l},\, p_{h}$\}
+and pressure {[}hPa{]} and \{$T_{l},\,T_{h}$\} and \{$p_{l},\,p_{h}$\}
 are the respective lower and upper limits for temperature along the
 abscissa and ordinate. For generating the diagram, this is coded into
 a function that provides the abscissa for the plot, as follows:
 
 <<XYplot-function, echo=TRUE, include=TRUE>>=
+
 ####
 ##  given temperature (deg.C) and pressure (hPa), generates the appropriate abscissa coordinate
 ##  and returns that along with the original pressure is a vector suitable for plotting.
 ####
 # references tBot, tTop, pBot, pTop in the global environment!! caution!!
 XYplot <- function (.T, .p) { 
-  return (data.frame (X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop), Y=.p))
+  return (data_frame (X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop), Y=.p))
 }
-@
 
+@
 
 \subsection{The structure for the plot data and background}
 
@@ -198,7 +197,7 @@ XYplot (DF\$MR10, DF\$P) where DF is the data.frame containing the
 results of prior calculation. 
 \item The structure for the data.frame is as follows:
 \end{enumerate}
-\noindent \begin{center}
+\begin{center}
 {\small{}}%
 \begin{tabular}{|c|c|c|c|c|}
 \hline 
@@ -217,14 +216,14 @@ results of prior calculation.
 \hline 
 {\small{}Direct-integration} & {\small{}ThetaIM60 to ThetaI50} & {\small{}``} & {\small{}``} & {\small{}``}\tabularnewline
 \hline 
-\end{tabular}
-\par\end{center}{\small \par}
+\end{tabular}{\small\par}
+\par\end{center}
 
 The pressure variable determines the number of rows for each of the
 other variables, so for example each of multiple columns for Theta
-have the same length as the pressure variable. However, there are
-300/5+1=61 Theta rows representing individual values of Theta vs pressure,
-so for example there is a row of values for Theta=$T_{0}-100$ called
+has the same length as the pressure variable. However, there are 300/5+1=61
+Theta rows representing individual values of Theta vs pressure, so
+for example there is a row of values for Theta=$T_{0}-100$ called
 ThetaM100 representing the temperature corresponding to that value
 of Theta at each pressure level. Once this table is constructed, plots
 can be generated from data in the table without need to repeat the
@@ -234,7 +233,6 @@ sub-plots that might span only parts of the range covered by the table.
 The plot background itself is then constructed from ggplot calls to
 make it possible to save the generated background for overplotting
 with data.
-
 
 \subsection{Basic lines: isotherms, isobars, dry adiabats}
 
@@ -261,11 +259,11 @@ the relationship \\
 \frac{R}{c_{p}}=\frac{R_{d}}{c_{pd}(1+\frac{1}{5}\frac{e}{p})}
 \]
 
-
-where quantities with subscript $d$ refer to dry air (cf.\href{https://drive.google.com/file/d/0B1kIUH45ca5Ab2Z6cld1M1cydjA/view?usp=sharing}{ ProcessingAlgorithms.pdf},
+where quantities with subscript $d$ refer to dry air (cf.\href{https://drive.google.com/file/d/0B1kIUH45ca5Ab2Z6cld1M1cydjA/view\%3Fusp\%3Dsharing}{ ProcessingAlgorithms.pdf},
 p. 38).
 
 <<basic-lines, eval=FALSE, echo=TRUE, include=TRUE>>=
+
 pBot <- 1100
 pRef <- 1000
 pTop <- 50
@@ -290,13 +288,13 @@ for (t in tLevels) {
 }
 
 ## start building data.frame to contain arrays holding lines to be plotted
-SkewTData <- data.frame (P=pLevels)
+SkewTData <- data_frame (P=pLevels)
 for (theta in seq (TZERO - 100, TZERO + 200, by=5)) {
   lines (XYplot (theta / ((1000/pLevels) ^ RbyCP) - TZERO, pLevels), col='orange')
   SkewTData[sprintf("Theta%.2f", theta)] <- theta / ((1000/pLevels) ^ RbyCP) - TZERO
 }
-@
 
+@
 
 \subsection{Mixing ratio}
 
@@ -311,14 +309,12 @@ with a plane water surface at temperature $T$ and pressure $p$ is
 \mathrm{MR=1000\thinspace\epsilon\frac{e_{s}(T)}{(p-e_{s}(T))}}\label{eq:MR}
 \end{equation}
 
-
 where $e_{s}(T)$ is the equilibrium water vapor pressure. Given a
 specified value of $\mathrm{MR}$, the value of $T$ giving that mixing
 ratio at a specified pressure can be found numerically by solving
 \[
 \mathrm{MR-1000\thinspace\epsilon\frac{e_{s}(T)}{(p-e_{s}(T))}=0}
 \]
-
 
 numerically, varying $T$ with $p$ amd $\mathrm{MR}$ fixed. The
 R routine 'nleqslv' is used here to find the temperature, which can
@@ -327,10 +323,12 @@ coordinate. This is implemented using this function in the call to
 'nleqslv':
 
 <<mr-fn, echo=TRUE, include=TRUE>>=
+
 # note: this omits the enhancement factor, as is conventional def. of eq. vapor pressure
 TfromRmix <- function (.T, .rMix, .P) {
   return (.rMix - MixingRatio (MurphyKoop (.T) / .P))
 }
+
 @
 
 Using this function with calls to 'nleqslv' for a sequence of pressures
@@ -338,6 +336,7 @@ gives a sequence of temperatures and hence a sequence of plot points
 for constructing the diagram.
 
 <<mixing-ratio-lines, eval=FALSE, echo=TRUE, include=TRUE>>=
+
 rMix <- c(0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1:3, 5, seq (10, 30, by=5)) * 0.001
 tt <- pLevels  # overwritten below, just a quick allocation
 for (rmix in rMix) {
@@ -347,15 +346,13 @@ for (rmix in rMix) {
   lines (XYplot (tt, pLevels), col='darkgreen', lty=2)
   SkewTData[sprintf("MR%.02f", rmix*1000)] <- tt
 }
+
 @
 
-
-\subsection{Pseudo-adiabatic equivalent potential temperature%
-\footnote{Sometimes called, incorrectly, pseudo-equivalent potential temperature
+\subsection{Pseudo-adiabatic equivalent potential temperature\protect\footnote{Sometimes called, incorrectly, pseudo-equivalent potential temperature
 (it is pseudo-adiabatic in the sense that all water condensate is
 removed as it appears) or equivalent potential temperature (a term
-better understood to refer to the true adiabatic process).%
-}}
+better understood to refer to the true adiabatic process).}}
 
 The representation of pseudo-adiabats can be done in two ways, either
 via the formula of Davies-Jones (2009), as presented in ProcessingAlgorithms.pdf,
@@ -379,7 +376,6 @@ $p$ (for a perfect gas) via
 Tds^{\prime}=c_{p}^{\prime}dT-v^{\prime}dp\label{eq:2ndLaw}
 \end{equation}
 
-
 where primed quantities refer to molar quantities, such that $c_{p}^{\prime}$
 and $v^{\prime}$are the molar heat capacity at constant pressure
 and the molar volume, respectively. There are three contributions
@@ -396,11 +392,9 @@ pressure, and $L_{v}^{\prime}$ is the molar latent heat of vaporization
 of liquid water. The last term in (\ref{eq:EntropySum}) arises because
 there is an entropy change associated with the phase change from liquid
 water to water vapor, and this last term is the heat released by that
-phase change.%
-\footnote{An additional contribution arises from the entropy increase associated
+phase change.\footnote{An additional contribution arises from the entropy increase associated
 with mixing of the water vapor and the dry air, but this is insignificant
-and will be neglected.%
-} The other terms arise from summing (\ref{eq:2ndLaw}) for the three
+and will be neglected.} The other terms arise from summing (\ref{eq:2ndLaw}) for the three
 individual components.
 
 The mixing ratios $r$ and$r_{w}$ are, respectively, the masses of
@@ -411,7 +405,6 @@ r & = & \frac{n_{v}^{\prime}M_{w}}{n_{d}^{\prime}M_{d}}\nonumber \\
 r_{w} & = & \frac{n_{w}^{\prime}M_{w}}{n_{d}^{\prime}M_{d}}\label{eq:MixingRatioDefs}
 \end{eqnarray}
 
-
 where $M_{w}$ is the molecular weight of water (mass of water per
 mole) and $M_{d}$ that of dry air. Dividing (\ref{eq:EntropySum})
 by $n_{d}^{\prime}M_{d}T$ and setting $ds^{\prime}$ to zero for
@@ -420,7 +413,6 @@ an isentropic process leads to
 \begin{equation}
 (c_{pd}+rc_{pv}+r_{w}c_{w})\frac{dT}{T}-\frac{v_{d}}{T}dp_{d}-r\frac{v_{v}}{T}de+\frac{L_{v}}{T}dr=0\label{eq:DiffForm1}
 \end{equation}
-
 
 where unprimed quantities $c_{pd}$, $c_{pv}$, $c_{w}$, $v_{d}$,
 $v_{v}$, and $L_{v}$ are specific quantities (i.e., per unit mass
@@ -435,13 +427,11 @@ of the Clausius-Clapeyron equation is
 \frac{de_{s}}{e_{s}}=\frac{L_{v}dT}{R_{w}T^{2}}\label{eq:Clausius-Clapeyron}
 \end{equation}
 
-
 and Kirchhoff's equation (cf., e.g., Emanuel 1994, Eq.~4,4,3) is
 
 \begin{equation}
-dL_{V}=(c_{pv}-c_{w})\, dT\,\,.\label{eq:Kirchhoff}
+dL_{V}=(c_{pv}-c_{w})\,dT\,\,.\label{eq:Kirchhoff}
 \end{equation}
-
 
 With $e=e_{s}(T)$ and $r=r_{s}(T)=\frac{M_{w}}{M_{d}}e_{s}(T)/p_{d}$
 as corresponds to a saturated parcel, and with some additional transformations
@@ -453,21 +443,17 @@ p:
 \frac{L_{v}dr}{T}=\frac{d(L_{v}r)}{T}-r\frac{dL_{v}}{dT}\frac{dT}{T}=\frac{d(L_{v}r)}{T}-r(c_{pv}-c_{w})\frac{dT}{T}
 \]
 
-
 \[
 rR_{w}\frac{de_{s}}{e_{s}}=rR_{w}\frac{L_{vdT}}{R_{w}T^{2}}=\frac{L_{v}r}{T}\frac{dT}{T}
 \]
-
 
 \[
 \frac{d(L_{v}r)}{T}=d\left(\frac{L_{v}r}{T}\right)+\frac{L_{v}r}{T}\frac{dT}{T}
 \]
 
-
 \[
-d\left(\frac{L_{v}r}{T}\right)=\left(\frac{\partial\left(\frac{L_{v}r}{T}\right)}{\partial T}\right)_{p_{d}}dT+\left(\frac{\partial\left(\frac{L_{v}r}{T}\right)}{\partial p_{d}}\right)_{T}dp_{d}=\frac{\epsilon T\, d\left(\frac{L_{v}e_{s}(T)}{T}\right)}{p_{d}dT}\frac{dT}{T}-\frac{L_{v}r}{T}\frac{dp_{d}}{p_{d}}
+d\left(\frac{L_{v}r}{T}\right)=\left(\frac{\partial\left(\frac{L_{v}r}{T}\right)}{\partial T}\right)_{p_{d}}dT+\left(\frac{\partial\left(\frac{L_{v}r}{T}\right)}{\partial p_{d}}\right)_{T}dp_{d}=\frac{\epsilon T\,d\left(\frac{L_{v}e_{s}(T)}{T}\right)}{p_{d}dT}\frac{dT}{T}-\frac{L_{v}r}{T}\frac{dp_{d}}{p_{d}}
 \]
-
 
 where the transformation to dependence on $T$ is a consequence of
 assuming that the parcel remains saturated, and where the temperature
@@ -478,14 +464,12 @@ terms in (\ref{eq:DiffForm1}) after these transformations leads to
 \left[(c_{pd}+r_{t}c_{w})+\frac{T\epsilon}{p_{d}}\left(\frac{\partial\left(\frac{L_{v}e_{s}(T)}{T}\right)}{\partial T}\right)_{p_{d}}\right]\frac{dT}{T}=\left[R_{d}+\frac{L_{v}r}{T}\right]\frac{dp_{d}}{p_{d}}
 \]
 
-
 where $r_{t}=r+r_{w}$ is the total water mixing ratio and where $\epsilon=M_{w}/M_{d}$.
 The result then gives a relationship between $T$ and $p_{d}$:
 
 \begin{equation}
 \frac{dT}{dp_{d}}=\frac{TR_{d}+L_{v}r}{p_{d}}\,\left[(c_{pd}+r_{t}c_{w})+\frac{T\epsilon}{p_{d}}\left(\frac{\partial\left(\frac{L_{v}e_{s}(T)}{T}\right)}{\partial T}\right)_{p_{d}}\right]^{-1}\label{eq:dTdp}
 \end{equation}
-
 
 The result is a derivative that can be used for numerical integrations
 that take into account the temperature dependence of the specific
@@ -507,9 +491,47 @@ represent the wet-bulb pseudo-adiabatic potential temperature) or
 starting from a pressure where humidity is negligible (which would
 result in pseudo-adiabats labeled by their value equivalent to potential
 temperature after all water is condensed). Here the former is chosen.
-The integration is performed using the following R code:
+The integration is performed using the R code that follows.
+
+Another option is to construct the pseudoadiabatc using one of several
+alternate forms of the equation for pseudo-adiabatic equivalent potential
+temperature. They alternatives (for all of which values are generated
+below) are:
+\begin{enumerate}
+\item The Rossby equation:\\
+\begin{equation}
+\Theta_{e}^{(Rossby)}=T_{k}\left(\frac{1000}{p-e}\right)^{R_{d}/c_{pd}}e^{L_{v}r/(c_{pd}T_{k}}\label{eq:RossbyEq}
+\end{equation}
+where $T_{k}$ is the temperature in kelvin, $p$ the total pressure,
+$e$ the vapor pressure, $R_{d}$ the dry-air specific heat, $c_{pd}$
+the specific heat of dry air, $L_{v}$ the latent heat of vaporization,
+and $r$ the water vapor mixing ratio.
+\item The Bolton equation:\footnote{David Bolton, 1980: The Computation of Equivalent Potential Temperature.
+Mon. Wea. Rev., 108, 1046--1053. doi: http://dx.doi.org/10.1175/1520-0493(1980)108<1046:TCOEPT>2.0.CO;2 }\\
+\begin{equation}
+\Theta_{e}^{(Bolton)}=T_{k}\left(\frac{1000}{p}\right)^{0.2854(1-0.28\times10^{-3}r)}\exp\left[\left(\frac{3.376}{T_{L}}-0.00254\right)r(1+0.81\times10^{-3}r\right]\label{eq:BoltonEq}
+\end{equation}
+where $T_{L}$ is the temperature at the lifted condensation level
+(which for the purpose of calculating pseudoadiabats can be set to
+$T_{k}$; for other purposes, see Eq.~21 of Bolton 1980) and other
+symbols are as for the Rossby equation.
+\item The Davies-Jones formula:\\
+\begin{equation}
+\Theta_{p}=T_{k}\left(\frac{1000}{p-e}\right)^{0.2854(T_{k}/T_{L})^{0.28\times10^{-3}r}}\exp\frac{L_{v}^{*}r}{c_{pd}T_{L}}\label{eq:DaviesJonesEq}
+\end{equation}
+where the latent heat $L_{v}^{*}=2.56313\times10^{6}-1754(T_{L}-T_{0})+1.137\times10^{6}r$
+(with $T_{0}=273.15\thinspace$K) is adjusted by fits to integration
+results and so differs from the true values of latent heat of vaporization.
+For the purpose of determining pseudoadiabats, $T_{L}$ can be set
+equal to $T_{k}$.
+\end{enumerate}
+The procedure used here is to calculate each of these, along with
+the direct-integration result, and save the results in a table with
+high pressure resolution (5 mb). That table then can be used to construct
+a thermodynamic diagram without repeating all the calculations.
 
 <<integration-step, echo=TRUE, include=TRUE>>=
+
 # this chunk includes functions including one to integrate between two levels
 # if the specific-heat-of-liquid-water data have not been read, read and store them
 if (file.exists ("./SpecificHeatWater.Rdata")) {
@@ -523,6 +545,7 @@ CWData <- cw.table [ , 2:3]
 CWData <- CWData[order(CWData), ]
 CWData <- CWData[!is.na(CWData[ ,1]), ]
 load ("./CPV.Rdata")
+CPV <- as_data_frame(CPV)
   
 LatentHeatApprox <- function (.T) {  # input in deg.C
   return (2.501e6 - 2370 * .T)
@@ -530,11 +553,12 @@ LatentHeatApprox <- function (.T) {  # input in deg.C
 CPWaterVapor <- function (.T) {
   tk <- .T + TZERO
   # note that there was an error in this formula in the earlier ThetaE memo, 3 Jan 2011
-  return (1000 * LagrangeInterpolate (tk, 4, CPV))
+  y <- LagrangeInterpolate (tk, 4, CPV)[[1]]
+  return(1000 * y)
 }
 SpecificHeatLiquidWater <- function (.T) {
   tk <- .T + TZERO
-  return (1000. * LagrangeInterpolate (tk, 4, CWData))
+  return (1000. * LagrangeInterpolate (tk, 4, CWData)[[1]])
 }
 # not used; here for reference
 LCLfn <- function (.p, RbyCP, thetam, mr) {  # used by LCL function call to nleqslv
@@ -552,7 +576,7 @@ LCL <- function (.RH, .T, .p) {  # .RH in a fraction (not %), .T in deg.C, .p in
   thetam <- .T+TZERO * (1000 / .p)^RbyCP
   pLCL <- nleqslv (.p, LCLfn, jac=NULL, RbyCP, thetam, mr)
   tLCL <- thetam / (1000/pLCL)^RbyCP
-  return (data.frame ("pLCL"=pLCL, "tLCL"=tLCL))
+  return (data_frame ("pLCL"=pLCL, "tLCL"=tLCL))
 }
 
 deriv1 <- function (.T, .LV) { # evaluate last partial deriv. in (10)
@@ -612,11 +636,13 @@ IntegrationStep <- function (tc, pd1, pd2, rtot, aflag) {
   }
   return (tc)
 }
+
 @
 
 <<THETA-P, echo=TRUE, include=TRUE, echo=-2, fig.height=6, warning=FALSE>>=
-<<basic-lines>>
-<<mixing-ratio-lines>>
+
+# <<basic-lines>>
+# <<mixing-ratio-lines>>
 
 ## first show Rossby solution
 TWB <- seq (tBot, tTop, by=5)
@@ -694,12 +720,12 @@ for (twb in TWB) {
   ptLevels <- pLevels + MurphyKoop(tt)
   ptLevels[1] <- pBot
   ## now interpolate to get tt interpolated to pLevels, for data.frame:
-  DI <- data.frame (ptLevels, tt)
+  DI <- data_frame (ptLevels, tt)
   tti <- tt
   for (i in 1:(length(pLevels))) {
-    tti[i] <- LagrangeInterpolate (pLevels[i], 4, DI)
+    tti[i] <- LagrangeInterpolate (pLevels[i], 4, DI)[[1]]
   }
-  lines (XYplot (tt, ptLevels), col='brown', lty=2, lwd=3)
+  lines (XYplot (tti, ptLevels), col='brown', lty=2, lwd=3)
 ## this needs correction for diff pdry vs p
   SkewTData[sprintf("ThetaI%.02f", twb+TZERO)] <- tti
 }
@@ -725,9 +751,7 @@ save(SkewTData, file="SkewTData.Rdata")
 
 @
 
-
 \section{Constructing the Skew-T background via ggplot}
-
 
 \subsection{Reasons for using ggplot}
 
@@ -741,7 +765,6 @@ can be generated by the preserved plot definition, with the actual
 sounding over-plotted as an additional layer. That is the approach
 taken in the remainder of this document.
 
-
 \subsection{The basic background}
 
 Here are some variables that determine the range covered by the plot.
@@ -750,6 +773,7 @@ some work is still needed to get that to work for other than the standard
 limits here:
 
 <<adjustable-parameters, echo=TRUE, include=TRUE>>=
+
 ####
 ##   Here are characteristics for the plot, which can be changed as desired.
 ##   Some other characteristics, like definition of which mixing-ratio lines
@@ -771,21 +795,24 @@ tColor <- 'darkblue'        # temperature lines
 tlwd=0.4                    # line width for temperature lines
 
 pBot <- 1000                # range in pressure and temperature for the plot
-pTop <- 100                 # (for GV)
+pTop <- 100                 # normally 100
 tBot <- -40
+tTop <- 40
 tMin <- -140                # needed to cover isotherms in top-left of plot
-pTop <- 300                 # (for C-130)
-tBot <- -20
-tMin <- -120
-tTop <- 40                  # both
+## C-130 values:
+# pTop <- 300
+# tBot <- -20
+# tTop <- 40
 pLevels <- seq (pBot, pTop, by=-50)    # lines to plot for pressure
 tLevels <- seq (tMin, tTop, by=5)      # lines to plot for temperature
 ####
 ##   end of changeable plot characteristics
 ####
+
 @
 
 <<ggplot-call-and-first-layers, echo=TRUE, include=TRUE>>=
+
 require (ggplot2)
 require (ggthemes)
 require (grid)
@@ -795,8 +822,9 @@ library (scales)
 ## models for how the generated information can be used. Note that the following datafile
 ## contains some variables that are not used below but are present because they were
 ## generated for comparison to the variables actually used.
-load ("./SkewTData.Rdata")
+load ("./SkewTData.Rdata", verbose=TRUE)
 ## read a file for access to sample data
+
 @
 
 For convenience in determining the correspondence between \{T, P\}
@@ -810,24 +838,27 @@ the XYplot function is redefined to return the logarithm of the pressure
 rather than the pressure as the second coordinate.
 
 <<XYplot, echo=TRUE, include=TRUE>>=
+
 XYplot <- function (.T, .p) {    
-  return (data.frame(X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/pTop),                                        Y=log10(.p))) 
+  return (data_frame(X=(.T-tBot) / (tTop-tBot) - log10(.p/pBot) / log10(pBot/100),  Y=log10(.p))) 
 }
+
 @
 
 Here is code to construct the ggplot definition, with reference to
 the data already generated for the isopleths:
 
 <<ggplot-construction, echo=TRUE, include=TRUE, warning=FALSE>>=
+
 NPL <- length (pLevels)
 XP <- vector()
 YP <- vector()
 for (p in pLevels) {  # in general, this is poor, a very slow method in R. But ...
   lp <- log10(p)
-  XP <- c(XP, c(0, 1, NA))
+  XP <- c(XP, c(0,1,NA))
   YP <- c(YP, lp, lp, 0)
 }
-XYP <- data.frame (X=XP, Y=YP)
+XYP <- data_frame (X=XP, Y=YP)
 XYP2 <- XYP           # 2nd data.frame to hold line definition skipping even levels,
                       # for plotting solid pressure lines instead of dashed
 sq <- 4:5             # assemble a vector of points in XYP2 to skip
@@ -839,7 +870,7 @@ while (4+6*j+1 <= length (XYP2$X)) {
 XYP2$X[sq] <- NA      # this forces the flagged points to be skipped
 
 # Define g to hold the plot definition and the pressure lines
-g <- ggplot (data=XYP, aes(x=X, y=Y)) + ylim(log10(pBot), log10(pTop))
+g <- ggplot (data=XYP, aes(x=X, y=Y)) + ylim (log10 (pBot), log10 (pTop))
          # set a background color
 g <- g + theme(panel.background = element_rect(fill = bColor))
          # plot the pressure lines, first dashed, then solid
@@ -851,42 +882,41 @@ g <- g + theme(panel.grid.minor = element_blank())
 g <- g + theme (axis.text = element_blank ())
 g <- g + theme (axis.ticks = element_blank ())
          # specify characters for axes
-g <- g + theme (axis.title=element_text(face="plain",size=12,colour="blue"))
+g <- g + theme (axis.title=element_text (face="plain", size=12, colour="blue"))
          # add a border to complete the box around the plot
-border <- data.frame (X=c(0,0,NA,1,1), 
-                      Y=c(log10(pBot),log10(pTop),log10(pBot),log10(pBot),log10(pTop)))
+border <- data_frame (X = c(0,0,NA,1,1), 
+            Y = c(log10(pBot), log10 (pTop), log10 (pBot), log10 (pBot), log10 (pTop)))
 g <- g + geom_path (data=border, color=pColor, lwd=plwd, na.rm=TRUE)
         # write the axis labels
 g <- g + xlab (expression (paste("Temperature or dew point [",degree,"C]")))
 g <- g + ylab ("Pressure [hPa]")
          # label the pressure lines, all in one geom_text call with data in DLPLS
-pls <- seq (pBot, pTop, by=-100)
+pls <- c(seq (pBot, pTop, by=-100), 50)
 LPLS <- length(pls)
 labl <- character()
 for (i in 1:LPLS) {labl <- c(labl, sprintf("%d", pls[i]))}
-DLPLS <- data.frame (X=rep(-0.025, LPLS), Y=log10(pls), LABEL=labl)
+DLPLS <- data_frame (X=rep(-0.025, LPLS), Y=log10(pls), LABEL=labl)
 g <- g + geom_text (data=DLPLS, aes(x=X, y=Y, label=LABEL), size=4)
          # draw the isotherms
 xt <- vector ()
 yt <- vector ()
-YR <- log10 (pBot/pTop)
 for (t in tLevels) {
   XPb <- XYplot (t, pBot)        # (x,y) at bottom axis
   XPt <- XYplot (t, pTop)        # (x,y) at top axis
-  if (XPt$X <= 0) {next}         # skip lines out of range
+  if (XPt$X < 0) {next}         # skip lines out of range
   if (XPb$X >= 1) {next}
   if (XPb$X < 0) {               # truncate lines to stay within plot area
-    XPb$Y <- XPb$Y+XPb$X * YR
+    XPb$Y <- XPb$Y+XPb$X
     XPb$X <- 0
   }
   if (XPt$X > 1) {
-    XPt$Y <- XPt$Y + (XPt$X - 1) * YR
+    XPt$Y <- XPt$Y + XPt$X - 1
     XPt$X <- 1
   }
   xt <- c(xt, c(XPb$X, XPt$X, NA))
   yt <- c(yt, c(XPb$Y, XPt$Y, NA))
 }
-DT <- data.frame (X = xt, Y = yt)
+DT <- data_frame (X = xt, Y = yt)
 DT2 <- DT
 g <- g + geom_path (data=DT, aes(x=X, y=Y), color=tColor, lwd=tlwd, lty=2, na.rm=TRUE)
 sq <- 4:5
@@ -904,18 +934,22 @@ LPLT <- length (pltt)
 lablt <- character()
 for (i in 1:LPLT) {lablt <- c(lablt, sprintf("%d", pltt[i]))}
 lablt[lablt=="0"] <- "0  "         # move the 0 to look better
-DLPLT <- data.frame (X=XYplot (pltt, pBot)$X, Y=rep(log10(pBot), LPLT), LABEL=lablt)
+DLPLT <- data_frame (X=XYplot (pltt, pBot)$X, Y=rep(log10(pBot), LPLT), LABEL=lablt)
 DLPLT2 <- DLPLT [(DLPLT$X > 0), ]
-DLPLT2$Y2 <- DLPLT2$Y - (1-DLPLT2$X) * YR
-g <- g + geom_text (data=DLPLT2, aes(x=X, y=Y, label=LABEL, angle=45, hjust=1.5, vjust=0.5),
-                    size=4)
-g <- g + geom_text (data=DLPLT2, aes(x=1.02, y=Y2, label=LABEL, angle=45, hjust=-0.3, vjust=-0.0),
-                    size=3.5)
-DLPLT3 <- DLPLT[(DLPLT$X <= 0), ]
-DLPLT3 <- DLPLT3[(DLPLT3$X > -1), ]
-DLPLT3$Y2 <- rep (log10(pTop), length (DLPLT3$X))
-g <- g + geom_text (data=DLPLT3, aes(x=X+1, y=Y2, label=LABEL, angle=45, hjust=-0.2, vjust=0.2),
-                    size=3.5)
+g <- g + geom_text (data=DLPLT2, aes(x=X, y=Y, label=LABEL, angle=45, hjust=1.4, vjust=0.4), size=4)
+g <- g + geom_text (data=DLPLT, aes(x=1.02, y=Y-0.99+X, label=LABEL, angle=45, hjust=-0.3, vjust=-0.0), size=3.5)
+## C-130 case:
+# g <- g + geom_text (data=DLPLT, aes(x=1.02, y=Y-1+X, label=LABEL, angle=45, hjust=-0.3, vjust=-0.0), size=3.5)
+DLPLT3 <- DLPLT[(DLPLT$X < -0.3), ]    ## 50 hPa case
+DLPLT3 <- DLPLT[(DLPLT$X < 0 & DLPLT$X > -1), ]       ## 100 hPa case
+## C-130 case:
+# DLPLT3 <- DLPLT[(DLPLT$X > -0.5 & DLPLT$X < 0.5), ]  # C130 case
+# DLPLT3 <- DLPLT3[(DLPLT3$X > -0.5), ]
+DLPLT3["Y"] <- rep (log10 (pTop), nrow (DLPLT3))
+# g <- g + geom_text (data=DLPLT3, aes(x=X+1.3, y=Y, label=LABEL, angle=35, hjust=-0.2, vjust=0.2), size=2.8)  ## 50 hPa case
+g <- g + geom_text (data=DLPLT3, aes(x=X+1.0, y=Y, label=LABEL, angle=35, hjust=-0.2, vjust=0.2), size=2.8)  ## 100 hPa case
+# C-130 case:
+# g <- g + geom_text (data=DLPLT3, aes(x=X+0.52, y=Y, label=LABEL, angle=35, hjust=-0.2, vjust=0.2), size=2.8)
 
 ## add variables from SkewTData:
          # first set pressure out-of-plot to be missing
@@ -949,9 +983,8 @@ for (name in names(SkewTData)) {
     ymr <- c(ymr, SkewTData$P)
   }
 }
-MRDF <- data.frame (X=xmr, Y=ymr)
-g <- g + geom_path (data=MRDF, aes(x=X, y=Y), color='darkgreen', lty=4, 
-                    lwd=0.8, na.rm=TRUE)
+MRDF <- data_frame (X=unlist(xmr), Y=ymr)
+g <- g + geom_path (data=MRDF, aes(x=X, y=Y), color='darkgreen', lty=4, lwd=0.8, na.rm=TRUE)
 
          # potential temperature lines
 xmth <- vector ()
@@ -967,16 +1000,15 @@ for (name in names(SkewTData)) {
     ymth <- c(ymth, SkewTData$P)
   }
 }
-MRDFTH <- data.frame (X=xmth, Y=ymth)
-g <- g + geom_path (data=MRDFTH, aes(x=X, y=Y), color='darkorange', lty=1, 
-                    lwd=0.4, na.rm=TRUE)
+MRDFTH <- data_frame (X=unlist(xmth), Y=ymth)
+g <- g + geom_path (data=MRDFTH, aes(x=X, y=Y), color='darkorange', lty=1, lwd=0.4, na.rm=TRUE)
 
          # equivalent potential temperature: have several to choose from:
          #   I  results from integration
          #   R  results from Rossby definition
          #   B  results from Bolton definition
          #   P  results from Davies-Jones definition
-ThetaESelection <- "I"
+ThetaESelection <- "P"
 ThetaEVariable <- paste ("Theta", ThetaESelection, sep='')
 
 ## equivalent potential temperature
@@ -993,17 +1025,14 @@ for (name in names(SkewTData)) {
     ymI <- c(ymI, SkewTData$P)
   }
 }
-MRDFI <- data.frame (X=xmI, Y=ymI)
-g <- g + geom_path (data=MRDFI, aes(x=X, y=Y), color='red', lty=1, 
-                    lwd=0.4, na.rm=TRUE)
+MRDFI <- data_frame (X=unlist(xmI), Y=ymI)
+g <- g + geom_path (data=MRDFI, aes(x=X, y=Y), color='red', lty=1, lwd=0.4, na.rm=TRUE)
 
 ## save the diagram for other uses
 skewTDiagram <- g
-# need pBot etc as reference for plotting an aircraft sounding relative to this background
-save(pBot, pTop, tBot, tTop, skewTDiagram, file="./skewTDiagramC130.Rdata")
+save(skewTDiagram, pBot, pTop, tBot, tTop, file="./skewTDiagram.Rdata")
 
 @
-
 
 \subsection{Adding flight data to the background}
 
@@ -1018,6 +1047,7 @@ This is the basis for the function in Ranadu called SkewTDiagram(
 to the background as preserved here.
 
 <<add-flight-data, echo=TRUE, include=TRUE, fig.height=6, warning=FALSE>>=
+
 ## plot a sample sounding
 # load("./skewTDiagram.Rdata")
 # g <- skewTDiagram
@@ -1028,15 +1058,12 @@ fname = sprintf("%s%s/%s%s.nc", Directory,Project,Project,Flight)
 Data <- getNetCDF (fname, standardVariables(c("THETAP")))		
 r <- setRange (Data$Time, 123100, 125500)
 DS <- Data[r, c("PSXC", "ATX", "DPXC")]
-DP <- data.frame (P=XYplot (DS$ATX, DS$PSXC)$Y, 
-                  ATX=XYplot (DS$ATX, DS$PSXC)$X, 
-                  DPXC=XYplot(DS$DPXC, DS$PSXC)$X)
+DP <- data_frame (P=XYplot (DS$ATX, DS$PSXC)$Y, ATX=XYplot (DS$ATX, DS$PSXC)$X, DPXC=XYplot(DS$DPXC, DS$PSXC)$X)
 g <- g + geom_path (data=DP, aes(x=ATX, y=P, color='ATX'), lwd=1.5, na.rm=TRUE)
 g <- g + geom_path (data=DP, aes(x=DPXC, y=P, color='DPXC'), lwd=1.5, na.rm=TRUE)
-g <- g + theme(legend.position=c(0.2,0.85), legend.background=element_rect(fill="white"))
+g <- g + theme(legend.position=c(0.25,0.83), legend.background=element_rect(fill="white"))
 g <- g + labs(color='Measurement')
 g <- g + scale_colour_manual(name = "Measurement",values = c('black', 'darkgreen'))
-
 print(g)
 
 @
@@ -1058,7 +1085,7 @@ Reproducibility:
 \textsf{\textsc{\textcolor{blue}{Git:}}} & git@github.com:WilliamCooper/\Sexpr{thisFileName}.git\tabularnewline
 \end{tabular}
 
-\attachm{\Sexpr{thisFileName}.Rnw\\\Sexpr{thisFileName}.pdf\\skewTDiagramC130.Rdata\\SessionInfo}
+\attachm{\Sexpr{thisFileName}.Rnw\\\Sexpr{thisFileName}.pdf\\skewTDiagram.Rdata\\SessionInfo}
 %\cc{first attachment\\second\\3rd att}
 %\attach{attachment}
 %\attachm{first\\second} %\cc{first attachment\\second\\3rd att}
@@ -1067,7 +1094,7 @@ cat (toLatex(sessionInfo()), file="SessionInfo")
 
 @ 
 <<make-zip-archive, echo=TRUE, INCLUDE=TRUE>>=
-system (sprintf("zip %s.zip %s.Rnw %s.pdf skewTDiagramC130.Rdata SessionInfo", thisFileName, thisFileName, thisFileName))
+system (sprintf("zip %s.zip %s.Rnw %s.pdf skewTDiagram.Rdata SessionInfo", thisFileName, thisFileName, thisFileName))
 
 @ 
 
